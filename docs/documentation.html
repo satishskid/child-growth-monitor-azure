@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - Child Growth Monitor</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css">
+    <style>
+        .docs-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 100px 20px 60px;
+        }
+        
+        .docs-nav {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            z-index: 100;
+            max-height: 70vh;
+            overflow-y: auto;
+            width: 250px;
+        }
+        
+        .docs-nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .docs-nav ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .docs-nav ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem;
+            display: block;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .docs-nav ul li a:hover,
+        .docs-nav ul li a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .docs-content {
+            margin-left: 300px;
+        }
+        
+        .docs-section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .docs-section:last-child {
+            border-bottom: none;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+        
+        .installation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .installation-card {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .api-endpoint {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .endpoint-method {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-right: 1rem;
+        }
+        
+        .method-get { background: #10b981; color: white; }
+        .method-post { background: #3b82f6; color: white; }
+        .method-put { background: #f59e0b; color: white; }
+        .method-delete { background: #ef4444; color: white; }
+        
+        @media (max-width: 1200px) {
+            .docs-nav {
+                position: static;
+                transform: none;
+                width: 100%;
+                margin-bottom: 2rem;
+                max-height: none;
+            }
+            
+            .docs-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-child"></i>
+                <span>Child Growth Monitor</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="#quick-start" class="nav-link">Quick Start</a></li>
+                <li class="nav-item"><a href="#api" class="nav-link">API</a></li>
+                <li class="nav-item"><a href="https://github.com/satishskid/child-growth-monitor-azure" class="nav-link" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="docs-container">
+        <!-- Documentation Navigation -->
+        <div class="docs-nav">
+            <h3>Documentation</h3>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#quick-start">Quick Start</a></li>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#backend-setup">Backend Setup</a></li>
+                <li><a href="#ml-service">ML Service</a></li>
+                <li><a href="#mobile-app">Mobile App</a></li>
+                <li><a href="#api-reference">API Reference</a></li>
+                <li><a href="#deployment">Deployment</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+            </ul>
+        </div>
+
+        <!-- Documentation Content -->
+        <div class="docs-content">
+            <section id="overview" class="docs-section">
+                <h1>Child Growth Monitor Documentation</h1>
+                <p>Welcome to the comprehensive documentation for the Child Growth Monitor - an AI-powered solution for detecting child malnutrition using smartphone technology.</p>
+                
+                <h2>What is Child Growth Monitor?</h2>
+                <p>The Child Growth Monitor is a revolutionary healthcare application that combines smartphone-based 3D scanning with machine learning to assess child nutritional status. It provides:</p>
+                
+                <ul>
+                    <li><strong>3D Body Scanning:</strong> Using ARCore/ARKit for precise anthropometric measurements</li>
+                    <li><strong>AI Analysis:</strong> Machine learning models for instant nutritional assessment</li>
+                    <li><strong>WHO Standards:</strong> Comparison against World Health Organization growth standards</li>
+                    <li><strong>Offline Capability:</strong> Works in remote areas without internet connectivity</li>
+                    <li><strong>Privacy First:</strong> GDPR compliant with healthcare-grade security</li>
+                </ul>
+
+                <h2>Architecture Overview</h2>
+                <p>The system consists of three main components:</p>
+                <ul>
+                    <li><strong>Mobile App:</strong> React Native application with 3D scanning capabilities</li>
+                    <li><strong>Backend API:</strong> Flask-based REST API for data management and authentication</li>
+                    <li><strong>ML Service:</strong> FastAPI microservice for anthropometric analysis</li>
+                </ul>
+            </section>
+
+            <section id="quick-start" class="docs-section">
+                <h2>🚀 Quick Start</h2>
+                <p>Get the Child Growth Monitor running in under 5 minutes:</p>
+
+                <h3>Prerequisites</h3>
+                <ul>
+                    <li>Node.js 18+ and npm</li>
+                    <li>Python 3.11+</li>
+                    <li>Git</li>
+                    <li>Expo CLI (for mobile development)</li>
+                </ul>
+
+                <h3>One-Command Setup</h3>
+                <div class="code-block">
+<pre><code># Clone the repository
+git clone https://github.com/satishskid/child-growth-monitor-azure.git
+cd child-growth-monitor-azure
+
+# Start all services (automated script)
+./start_dev_environment.sh</code></pre>
+                </div>
+
+                <p>This will automatically:</p>
+                <ul>
+                    <li>Set up Python virtual environments</li>
+                    <li>Install all dependencies</li>
+                    <li>Initialize the database</li>
+                    <li>Start backend (port 5002), ML service (port 8002)</li>
+                </ul>
+
+                <h3>Start Mobile App</h3>
+                <div class="code-block">
+<pre><code># For macOS (optimized for file watching)
+cd mobile-app
+./start_mobile_macos.sh
+
+# For other platforms
+cd mobile-app
+npm start</code></pre>
+                </div>
+
+                <h3>Verify Installation</h3>
+                <div class="code-block">
+<pre><code># Run integration tests
+python test_integration.py</code></pre>
+                </div>
+            </section>
+
+            <section id="installation" class="docs-section">
+                <h2>📦 Detailed Installation</h2>
+                
+                <div class="installation-grid">
+                    <div class="installation-card">
+                        <h3><i class="fas fa-server"></i> Backend Setup</h3>
+                        <div class="code-block">
+<pre><code>cd backend
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python init_db.py
+python app.py</code></pre>
+                        </div>
+                        <p>Backend will run on <code>http://localhost:5002</code></p>
+                    </div>
+
+                    <div class="installation-card">
+                        <h3><i class="fas fa-brain"></i> ML Service Setup</h3>
+                        <div class="code-block">
+<pre><code>cd ml-service
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements-minimal.txt
+python main_minimal.py</code></pre>
+                        </div>
+                        <p>ML service will run on <code>http://localhost:8002</code></p>
+                    </div>
+
+                    <div class="installation-card">
+                        <h3><i class="fas fa-mobile-alt"></i> Mobile App Setup</h3>
+                        <div class="code-block">
+<pre><code>cd mobile-app
+npm install
+npx expo install --fix
+npm start</code></pre>
+                        </div>
+                        <p>Expo development server with QR code for testing</p>
+                    </div>
+
+                    <div class="installation-card">
+                        <h3><i class="fab fa-docker"></i> Docker Setup</h3>
+                        <div class="code-block">
+<pre><code># Start all services with Docker
+docker-compose up -d
+
+# Check status
+docker-compose ps</code></pre>
+                        </div>
+                        <p>Complete containerized deployment</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="backend-setup" class="docs-section">
+                <h2>🔧 Backend Configuration</h2>
+                
+                <h3>Environment Variables</h3>
+                <p>Create a <code>.env</code> file in the backend directory:</p>
+                <div class="code-block">
+<pre><code># Database Configuration
+DATABASE_URL=sqlite:///cgm_development.db
+# For production: postgresql://user:password@localhost/cgm_db
+
+# Security
+SECRET_KEY=your-secret-key-here
+JWT_SECRET_KEY=your-jwt-secret-here
+ENCRYPTION_KEY=your-32-byte-encryption-key
+
+# CORS
+CORS_ORIGINS=http://localhost:3000,http://localhost:19006
+
+# External Services
+ML_SERVICE_URL=http://localhost:8002
+AZURE_STORAGE_CONNECTION_STRING=your-azure-connection-string</code></pre>
+                </div>
+
+                <h3>Database Models</h3>
+                <p>The backend includes models for:</p>
+                <ul>
+                    <li><strong>User:</strong> Healthcare worker accounts with role-based access</li>
+                    <li><strong>Child:</strong> Child profiles with demographic information</li>
+                    <li><strong>Scan:</strong> 3D scan data and measurements</li>
+                    <li><strong>Analysis:</strong> ML analysis results and nutritional assessments</li>
+                </ul>
+            </section>
+
+            <section id="ml-service" class="docs-section">
+                <h2>🧠 ML Service</h2>
+                
+                <h3>Current Implementation</h3>
+                <p>The ML service currently provides mock implementations for:</p>
+                <ul>
+                    <li>Anthropometric measurement extraction from 3D scans</li>
+                    <li>Nutritional status classification</li>
+                    <li>WHO standard comparisons</li>
+                </ul>
+
+                <h3>Real Model Integration</h3>
+                <p>To integrate real ML models, replace the mock functions in:</p>
+                <div class="code-block">
+<pre><code># ml-service/models/anthropometric_predictor.py
+class AnthropometricPredictor:
+    def predict_measurements(self, scan_data):
+        # Replace with real computer vision model
+        # Input: 3D point cloud or depth images
+        # Output: height, weight, MUAC measurements
+        pass
+
+# ml-service/models/pose_estimator.py  
+class PoseEstimator:
+    def estimate_pose(self, image_data):
+        # Replace with real pose estimation model
+        # Input: RGB image data
+        # Output: 3D pose keypoints
+        pass</code></pre>
+                </div>
+
+                <h3>Model Requirements</h3>
+                <ul>
+                    <li>Input: 3D point cloud data or depth images</li>
+                    <li>Output: Height (cm), Weight (kg), MUAC (cm)</li>
+                    <li>Confidence scores for each measurement</li>
+                    <li>Processing time: < 5 seconds per analysis</li>
+                </ul>
+            </section>
+
+            <section id="mobile-app" class="docs-section">
+                <h2>📱 Mobile App Development</h2>
+                
+                <h3>Key Features</h3>
+                <ul>
+                    <li><strong>3D Scanning:</strong> ARCore/ARKit integration for body measurements</li>
+                    <li><strong>Offline Mode:</strong> Local data storage with sync when online</li>
+                    <li><strong>User Authentication:</strong> Secure login for healthcare workers</li>
+                    <li><strong>Child Profiles:</strong> Comprehensive demographic and health data</li>
+                    <li><strong>Results Visualization:</strong> Clear nutritional status displays</li>
+                </ul>
+
+                <h3>Testing on Device</h3>
+                <div class="code-block">
+<pre><code># Install Expo Go app on your phone
+# Start development server
+npm start
+
+# Scan QR code with Expo Go (Android) or Camera app (iOS)
+# App will load on your device for testing</code></pre>
+                </div>
+
+                <h3>Building for Production</h3>
+                <div class="code-block">
+<pre><code># Build for iOS
+npx expo build:ios
+
+# Build for Android  
+npx expo build:android
+
+# Or use EAS Build (recommended)
+npx eas build --platform ios
+npx eas build --platform android</code></pre>
+                </div>
+            </section>
+
+            <section id="api-reference" class="docs-section">
+                <h2>📚 API Reference</h2>
+                
+                <h3>Authentication Endpoints</h3>
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-post">POST</span>
+                    <code>/api/auth/login</code>
+                    <p>Authenticate healthcare worker and receive JWT token</p>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-post">POST</span>
+                    <code>/api/auth/register</code>
+                    <p>Register new healthcare worker account</p>
+                </div>
+
+                <h3>Child Management</h3>
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-get">GET</span>
+                    <code>/api/children</code>
+                    <p>Get list of children for authenticated user</p>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-post">POST</span>
+                    <code>/api/children</code>
+                    <p>Create new child profile</p>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-get">GET</span>
+                    <code>/api/children/{id}</code>
+                    <p>Get specific child details and scan history</p>
+                </div>
+
+                <h3>Scanning and Analysis</h3>
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-post">POST</span>
+                    <code>/api/scans</code>
+                    <p>Upload 3D scan data for analysis</p>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-get">GET</span>
+                    <code>/api/scans/{id}/results</code>
+                    <p>Get analysis results for a scan</p>
+                </div>
+
+                <h3>ML Service Endpoints</h3>
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-post">POST</span>
+                    <code>/analyze/anthropometric</code>
+                    <p>Analyze 3D scan data and return measurements</p>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-get">GET</span>
+                    <code>/models/status</code>
+                    <p>Check ML model status and versions</p>
+                </div>
+
+                <h3>Example Request</h3>
+                <div class="code-block">
+<pre><code>POST /api/scans
+Authorization: Bearer &lt;jwt_token&gt;
+Content-Type: application/json
+
+{
+  "child_id": "123",
+  "scan_data": {
+    "point_cloud": [...],
+    "images": [...],
+    "metadata": {
+      "device_info": "iPhone 13 Pro",
+      "scan_duration": 15.5
+    }
+  }
+}</code></pre>
+                </div>
+            </section>
+
+            <section id="deployment" class="docs-section">
+                <h2>🚀 Production Deployment</h2>
+                
+                <h3>Azure Deployment</h3>
+                <p>The project is configured for Azure deployment with:</p>
+                <ul>
+                    <li>Azure Container Instances for backend and ML service</li>
+                    <li>Azure Database for PostgreSQL</li>
+                    <li>Azure Blob Storage for scan data</li>
+                    <li>Azure B2C for authentication</li>
+                </ul>
+
+                <div class="code-block">
+<pre><code># Deploy to Azure
+./scripts/azure-deploy.sh
+
+# Or use Docker Compose for other platforms
+docker-compose -f docker-compose.prod.yml up -d</code></pre>
+                </div>
+
+                <h3>Environment Configuration</h3>
+                <p>For production, update environment variables:</p>
+                <div class="code-block">
+<pre><code># Production database
+DATABASE_URL=postgresql://user:password@host/db
+
+# Azure services
+AZURE_STORAGE_CONNECTION_STRING=...
+AZURE_B2C_TENANT_ID=...
+AZURE_B2C_CLIENT_ID=...
+
+# Security
+SECRET_KEY=strong-production-key
+ENCRYPTION_KEY=32-byte-production-key</code></pre>
+                </div>
+            </section>
+
+            <section id="troubleshooting" class="docs-section">
+                <h2>🔧 Troubleshooting</h2>
+                
+                <h3>Common Issues</h3>
+                
+                <h4>Backend Issues</h4>
+                <ul>
+                    <li><strong>Import errors:</strong> Make sure virtual environment is activated</li>
+                    <li><strong>Database errors:</strong> Run <code>python init_db.py</code> to initialize</li>
+                    <li><strong>Permission denied:</strong> Check file permissions on database file</li>
+                </ul>
+
+                <h4>Mobile App Issues</h4>
+                <ul>
+                    <li><strong>EMFILE errors on macOS:</strong> Use <code>./start_mobile_macos.sh</code></li>
+                    <li><strong>Expo version conflicts:</strong> Run <code>npx expo install --fix</code></li>
+                    <li><strong>Metro bundler issues:</strong> Clear cache with <code>npx expo start -c</code></li>
+                </ul>
+
+                <h4>ML Service Issues</h4>
+                <ul>
+                    <li><strong>Port conflicts:</strong> Ensure port 8002 is available</li>
+                    <li><strong>Memory issues:</strong> Reduce batch size or model complexity</li>
+                    <li><strong>CUDA errors:</strong> Check GPU drivers and PyTorch installation</li>
+                </ul>
+
+                <h3>Getting Help</h3>
+                <p>If you encounter issues:</p>
+                <ul>
+                    <li>Check the <a href="https://github.com/satishskid/child-growth-monitor-azure/issues" target="_blank">GitHub Issues</a></li>
+                    <li>Run the integration tests: <code>python test_integration.py</code></li>
+                    <li>Check service logs for detailed error messages</li>
+                    <li>Ensure all prerequisites are properly installed</li>
+                </ul>
+
+                <h3>Performance Optimization</h3>
+                <div class="code-block">
+<pre><code># Monitor system resources
+htop
+
+# Check service status  
+curl http://localhost:5002/health
+curl http://localhost:8002/health
+
+# View logs
+tail -f backend/logs/app.log
+docker-compose logs -f ml-service</code></pre>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Documentation-specific JavaScript
+        document.addEventListener('DOMContentLoaded', () => {
+            // Highlight active section in navigation
+            const sections = document.querySelectorAll('.docs-section');
+            const navLinks = document.querySelectorAll('.docs-nav a');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.id;
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { threshold: 0.3 });
+            
+            sections.forEach(section => observer.observe(section));
+            
+            // Copy code blocks
+            document.querySelectorAll('.code-block').forEach(block => {
+                const button = document.createElement('button');
+                button.innerHTML = '<i class="fas fa-copy"></i>';
+                button.style.cssText = `
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    background: rgba(255, 255, 255, 0.1);
+                    border: none;
+                    color: white;
+                    padding: 0.5rem;
+                    border-radius: 4px;
+                    cursor: pointer;
+                `;
+                
+                block.style.position = 'relative';
+                block.appendChild(button);
+                
+                button.addEventListener('click', () => {
+                    const code = block.querySelector('pre code') || block.querySelector('pre');
+                    navigator.clipboard.writeText(code.textContent).then(() => {
+                        button.innerHTML = '<i class="fas fa-check"></i>';
+                        setTimeout(() => {
+                            button.innerHTML = '<i class="fas fa-copy"></i>';
+                        }, 2000);
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

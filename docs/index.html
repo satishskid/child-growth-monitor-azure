@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Child Growth Monitor - AI-Powered Malnutrition Detection</title>
+    <meta name="description" content="Revolutionary smartphone-based solution for detecting child malnutrition using 3D scanning and machine learning technology.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-child"></i>
+                <span>Child Growth Monitor</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#home" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="#features" class="nav-link">Features</a></li>
+                <li class="nav-item"><a href="#technology" class="nav-link">Technology</a></li>
+                <li class="nav-item"><a href="#demo" class="nav-link">Demo</a></li>
+                <li class="nav-item"><a href="documentation.html" class="nav-link">Docs</a></li>
+                <li class="nav-item"><a href="https://github.com/satishskid/child-growth-monitor-azure" class="nav-link" target="_blank">GitHub</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Fighting Child Malnutrition with <span class="highlight">AI Technology</span></h1>
+                <p class="hero-subtitle">Revolutionary smartphone-based solution using 3D scanning and machine learning to detect malnutrition in children, enabling early intervention and saving lives.</p>
+                <div class="hero-buttons">
+                    <a href="#demo" class="btn btn-primary">
+                        <i class="fas fa-play"></i>
+                        See Demo
+                    </a>
+                    <a href="documentation.html" class="btn btn-secondary">
+                        <i class="fas fa-book"></i>
+                        Documentation
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">149M</span>
+                        <span class="stat-label">Children affected by stunting globally</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">45M</span>
+                        <span class="stat-label">Children suffering from wasting</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="scanning-animation">
+                            <div class="child-silhouette"></div>
+                            <div class="scan-lines"></div>
+                            <div class="measurements">
+                                <div class="measurement">Height: 71.8cm</div>
+                                <div class="measurement">Weight: 8.1kg</div>
+                                <div class="measurement">MUAC: 14.6cm</div>
+                                <div class="measurement status-normal">Status: Normal</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Revolutionary Features</h2>
+                <p>Cutting-edge technology meets humanitarian impact</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Smartphone-Based Scanning</h3>
+                    <p>No expensive equipment needed. Uses standard smartphone cameras with ARCore/ARKit for precise 3D measurements.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI-Powered Analysis</h3>
+                    <p>Advanced machine learning models analyze anthropometric measurements and provide instant nutritional assessments.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-wifi"></i>
+                    </div>
+                    <h3>Offline Functionality</h3>
+                    <p>Works in remote areas without internet connectivity. Data syncs when connection is available.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Privacy & Security</h3>
+                    <p>GDPR compliant with end-to-end encryption. Child data protection is our highest priority.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>WHO Standards</h3>
+                    <p>Built on WHO child growth standards with validated anthropometric measurement protocols.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <h3>Cloud Integration</h3>
+                    <p>Azure-powered backend with scalable ML services and secure data management.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section id="technology" class="technology">
+        <div class="container">
+            <div class="section-header">
+                <h2>Technology Stack</h2>
+                <p>Built with modern, scalable technologies</p>
+            </div>
+            <div class="tech-grid">
+                <div class="tech-category">
+                    <h3>Mobile App</h3>
+                    <div class="tech-items">
+                        <div class="tech-item">
+                            <i class="fab fa-react"></i>
+                            <span>React Native</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-cube"></i>
+                            <span>Expo</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-camera"></i>
+                            <span>ARCore/ARKit</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fab fa-typescript"></i>
+                            <span>TypeScript</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="tech-category">
+                    <h3>Backend API</h3>
+                    <div class="tech-items">
+                        <div class="tech-item">
+                            <i class="fab fa-python"></i>
+                            <span>Python Flask</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-database"></i>
+                            <span>PostgreSQL</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-lock"></i>
+                            <span>JWT Auth</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fab fa-docker"></i>
+                            <span>Docker</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="tech-category">
+                    <h3>ML Service</h3>
+                    <div class="tech-items">
+                        <div class="tech-item">
+                            <i class="fas fa-rocket"></i>
+                            <span>FastAPI</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-brain"></i>
+                            <span>TensorFlow</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-eye"></i>
+                            <span>OpenCV</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-cube"></i>
+                            <span>3D Pose Estimation</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="tech-category">
+                    <h3>Cloud Platform</h3>
+                    <div class="tech-items">
+                        <div class="tech-item">
+                            <i class="fab fa-microsoft"></i>
+                            <span>Azure</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-users"></i>
+                            <span>Azure B2C</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-brain"></i>
+                            <span>Azure ML</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-hdd"></i>
+                            <span>Azure Storage</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="demo">
+        <div class="container">
+            <div class="section-header">
+                <h2>See It In Action</h2>
+                <p>Experience the scanning and analysis process</p>
+            </div>
+            <div class="demo-content">
+                <div class="demo-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Scan Child</h3>
+                            <p>Use smartphone camera to perform 3D body scan with guided instructions</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>AI Analysis</h3>
+                            <p>Machine learning models analyze anthropometric measurements instantly</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Get Results</h3>
+                            <p>Receive nutritional assessment with WHO standard comparisons</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-video">
+                    <div class="video-placeholder">
+                        <i class="fas fa-play-circle"></i>
+                        <p>Demo Video</p>
+                        <span>Coming Soon</span>
+                    </div>
+                </div>
+            </div>
+            <div class="demo-results">
+                <h3>Sample Analysis Results</h3>
+                <div class="results-grid">
+                    <div class="result-card">
+                        <div class="result-metric">
+                            <span class="metric-value">71.8 cm</span>
+                            <span class="metric-label">Height</span>
+                        </div>
+                        <div class="metric-status normal">Normal</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-metric">
+                            <span class="metric-value">8.1 kg</span>
+                            <span class="metric-label">Weight</span>
+                        </div>
+                        <div class="metric-status normal">Normal</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-metric">
+                            <span class="metric-value">14.6 cm</span>
+                            <span class="metric-label">MUAC</span>
+                        </div>
+                        <div class="metric-status normal">Normal</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-metric">
+                            <span class="metric-value">81%</span>
+                            <span class="metric-label">Confidence</span>
+                        </div>
+                        <div class="metric-status high">High</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Make a Difference?</h2>
+                <p>Join us in the fight against child malnutrition. Get started with the Child Growth Monitor today.</p>
+                <div class="cta-buttons">
+                    <a href="https://github.com/satishskid/child-growth-monitor-azure" class="btn btn-primary" target="_blank">
+                        <i class="fab fa-github"></i>
+                        View on GitHub
+                    </a>
+                    <a href="documentation.html" class="btn btn-secondary">
+                        <i class="fas fa-book"></i>
+                        Read Documentation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-child"></i>
+                        <span>Child Growth Monitor</span>
+                    </div>
+                    <p>Fighting child malnutrition with AI technology and compassionate innovation.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Project</h3>
+                    <ul>
+                        <li><a href="documentation.html">Documentation</a></li>
+                        <li><a href="https://github.com/satishskid/child-growth-monitor-azure" target="_blank">GitHub Repository</a></li>
+                        <li><a href="#technology">Technology Stack</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="https://www.who.int/news-room/fact-sheets/detail/malnutrition" target="_blank">WHO Malnutrition Facts</a></li>
+                        <li><a href="https://www.who.int/tools/child-growth-standards" target="_blank">WHO Growth Standards</a></li>
+                        <li><a href="#features">Features</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <div class="social-links">
+                        <a href="https://github.com/satishskid/child-growth-monitor-azure" target="_blank">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Child Growth Monitor. Open source project for humanitarian impact.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
