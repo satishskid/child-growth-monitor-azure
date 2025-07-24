@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     libgthread-2.0-0 \
     gcc \
     g++ \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
@@ -34,12 +35,12 @@ RUN groupadd -r appuser && useradd -r -g appuser appuser
 RUN chown -R appuser:appuser /app
 USER appuser
 
-# Health check
+# Health check (use port 8002 which matches our FastAPI app)
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8001/health')" || exit 1
+    CMD curl -f http://localhost:8002/health || exit 1
 
-# Expose port
-EXPOSE 8001
+# Expose port (use 8002 to match our FastAPI app configuration)
+EXPOSE 8002
 
-# Run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "2"]
+# Run the application (use port 8002)
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002", "--workers", "2"]
