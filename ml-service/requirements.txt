@@ -1,0 +1,61 @@
+# Child Growth Monitor ML Service Dependencies
+
+# Core web framework
+fastapi==0.103.1
+uvicorn[standard]==0.23.2
+pydantic==2.3.0
+python-multipart==0.0.6
+
+# Core ML frameworks
+tensorflow==2.13.0
+torch==2.0.1
+torchvision==0.15.2
+scikit-learn==1.3.0
+joblib==1.3.2
+
+# Computer vision and image processing
+opencv-python==4.8.0.76
+Pillow==10.0.1
+numpy==1.24.4
+scipy==1.11.2
+
+# 3D processing and pose estimation
+open3d==0.17.0
+mediapipe==0.10.3
+
+# Data processing
+pandas==2.1.1
+matplotlib==3.7.2
+seaborn==0.12.2
+
+# API framework
+fastapi==0.103.1
+uvicorn==0.23.2
+pydantic==2.3.0
+
+# Azure ML integration
+azureml-core==1.52.0
+azureml-train-core==1.52.0
+azureml-widgets==1.52.0
+
+# Model serialization and versioning
+joblib==1.3.2
+pickle5==0.0.12
+
+# Anthropometric calculations
+WHO-child-growth-standards==1.0.0  # Custom package for WHO standards
+
+# Utilities
+python-dotenv==1.0.0
+structlog==23.1.0
+requests==2.31.0
+
+# Development and testing
+pytest==7.4.2
+pytest-cov==4.1.0
+jupyter==1.0.0
+ipykernel==6.25.1
+
+# Performance monitoring
+prometheus-client==0.17.1
+psutil==5.9.5
