@@ -51,9 +51,16 @@ check_prerequisites() {
         az login
     fi
     
-    # Check if Docker is installed
+    # Check if Docker is installed and add to PATH if needed
+    export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"
     if ! command -v docker &> /dev/null; then
         print_error "Docker is not installed. Please install Docker Desktop."
+        exit 1
+    fi
+    
+    # Check if Docker daemon is running
+    if ! docker info &> /dev/null; then
+        print_error "Docker daemon is not running. Please start Docker Desktop."
         exit 1
     fi
     

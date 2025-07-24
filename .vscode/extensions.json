@@ -1,0 +1,64 @@
+{
+    "recommendations": [
+        // Python Development
+        "ms-python.python",
+        "ms-python.flake8",
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        
+        // JavaScript/TypeScript/React Native
+        "ms-vscode.vscode-typescript-next",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "bradlc.vscode-tailwindcss",
+        
+        // React Native Specific
+        "msjsdiag.vscode-react-native",
+        "ms-vscode.vscode-react-native",
+        "expo.vscode-expo-tools",
+        
+        // Azure Development
+        "ms-vscode.azure-account",
+        "ms-azuretools.azure-dev",
+        "ms-azuretools.vscode-azureappservice",
+        "ms-azuretools.vscode-azurestorage",
+        "ms-azuretools.vscode-cosmosdb",
+        "ms-toolsai.vscode-ai",
+        
+        // Docker & Containers
+        "ms-azuretools.vscode-docker",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        
+        // API Development & Testing
+        "humao.rest-client",
+        "rangav.vscode-thunder-client",
+        "42crunch.vscode-openapi",
+        
+        // Git & Version Control
+        "eamodio.gitlens",
+        "github.vscode-pull-request-github",
+        
+        // Database Tools
+        "ms-mssql.mssql",
+        "ckolkman.vscode-postgres",
+        
+        // Documentation & Markdown
+        "yzhang.markdown-all-in-one",
+        "davidanson.vscode-markdownlint",
+        "shd101wyy.markdown-preview-enhanced",
+        
+        // Code Quality & Formatting
+        "streetsidesoftware.code-spell-checker",
+        "editorconfig.editorconfig",
+        "ms-vscode.vscode-json",
+        
+        // Productivity
+        "alefragnani.bookmarks",
+        "formulahendry.auto-rename-tag",
+        "christian-kohler.path-intellisense",
+        
+        // Healthcare & Privacy Specific
+        "redhat.vscode-yaml",
+        "ms-vscode.powershell"
+    ]
+}

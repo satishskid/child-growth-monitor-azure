@@ -1,17 +1,17 @@
-import React, { useState, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-  SafeAreaView,
-  Dimensions,
-} from 'react-native';
-import { Camera, CameraType, FlashMode } from 'expo-camera';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@shared/types';
+import { Camera, CameraType, FlashMode } from 'expo-camera';
+import React, { useRef, useState } from 'react';
+import {
+    Alert,
+    Dimensions,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 
 type ScanningScreenNavigationProp = StackNavigationProp<
   RootStackParamList,

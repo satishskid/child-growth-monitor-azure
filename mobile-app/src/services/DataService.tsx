@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AnthropometricPredictions, Child, Consent, ScanData, ScanSession } from '@shared/types';
+import React, { createContext, ReactNode, useContext, useState } from 'react';
 import { Alert } from 'react-native';
-import { Child, ScanSession, ScanData, Consent, AnthropometricPredictions } from '@shared/types';
-import { useAuth, authenticatedFetch } from './AuthService';
+import { authenticatedFetch, useAuth } from './AuthService';
 
 interface DataContextType {
   // Children management

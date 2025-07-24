@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  Alert,
-  SafeAreaView,
-} from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList, Child } from '@shared/types';
+import { Child, RootStackParamList } from '@shared/types';
+import React, { useEffect, useState } from 'react';
+import {
+    Alert,
+    FlatList,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 

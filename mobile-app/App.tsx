@@ -1,16 +1,15 @@
-import React from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 // Screens
-import WelcomeScreen from './src/screens/WelcomeScreen';
-import LoginScreen from './src/screens/LoginScreen';
-import HomeScreen from './src/screens/HomeScreen';
 import ConsentScreen from './src/screens/ConsentScreen';
-import ScanningScreen from './src/screens/ScanningScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import LoginScreen from './src/screens/LoginScreen';
 import ResultsScreen from './src/screens/ResultsScreen';
+import ScanningScreen from './src/screens/ScanningScreen';
+import WelcomeScreen from './src/screens/WelcomeScreen';
 
 // Services
 import { AuthProvider } from './src/services/AuthService';

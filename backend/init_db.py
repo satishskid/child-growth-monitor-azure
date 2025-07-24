@@ -2,14 +2,22 @@
 Database initialization and migration scripts for Child Growth Monitor
 """
 
-import os
 import logging
+import os
 from datetime import datetime
+
+from backend_app.config import get_config
+from backend_app.extensions import db
+from backend_app.models import (
+    AnthropometricPrediction,
+    Child,
+    Consent,
+    ScanData,
+    ScanSession,
+    User,
+)
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-from app.extensions import db
-from app.models import User, Child, Consent, ScanSession, ScanData, AnthropometricPrediction
-from app.config import get_config
 
 logger = logging.getLogger(__name__)
 
@@ -18,16 +26,16 @@ def create_database():
     """Create database and tables."""
     try:
         config = get_config()
-        
+
         # Create database engine
         engine = create_engine(config.SQLALCHEMY_DATABASE_URI)
-        
+
         # Create all tables
         db.metadata.create_all(engine)
-        
+
         logger.info("Database tables created successfully")
         return True
-        
+
     except Exception as e:
         logger.error(f"Error creating database: {str(e)}")
         return False
@@ -40,33 +48,33 @@ def init_default_data():
         admin_user = User(
             email="admin@childgrowthmonitor.org",
             name="System Administrator",
-            role="administrator",
+            role=UserRole.ADMINISTRATOR,
             organization="Child Growth Monitor",
             is_active=True,
-            email_verified=True
+            agreed_to_terms=True,
         )
         admin_user.set_password("admin123")  # Should be changed in production
-        
+
         db.session.add(admin_user)
-        
+
         # Create sample healthcare worker
         healthcare_worker = User(
             email="healthcare@example.org",
             name="Healthcare Worker",
-            role="healthcare_worker", 
+            role=UserRole.HEALTHCARE_WORKER,
             organization="Local Health Center",
             is_active=True,
-            email_verified=True
+            agreed_to_terms=True,
         )
         healthcare_worker.set_password("healthcare123")
-        
+
         db.session.add(healthcare_worker)
-        
+
         db.session.commit()
-        
+
         logger.info("Default data initialized successfully")
         return True
-        
+
     except Exception as e:
         logger.error(f"Error initializing default data: {str(e)}")
         db.session.rollback()
@@ -79,10 +87,10 @@ def migrate_database():
         # Add any migration logic here
         # For now, just ensure all tables exist
         create_database()
-        
+
         logger.info("Database migration completed")
         return True
-        
+
     except Exception as e:
         logger.error(f"Error migrating database: {str(e)}")
         return False
@@ -93,16 +101,16 @@ def reset_database():
     try:
         config = get_config()
         engine = create_engine(config.SQLALCHEMY_DATABASE_URI)
-        
+
         # Drop all tables
         db.metadata.drop_all(engine)
-        
+
         # Recreate tables
         db.metadata.create_all(engine)
-        
+
         logger.info("Database reset completed")
         return True
-        
+
     except Exception as e:
         logger.error(f"Error resetting database: {str(e)}")
         return False
@@ -114,26 +122,29 @@ def backup_database(backup_path: str = None):
         if backup_path is None:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             backup_path = f"backups/cgm_backup_{timestamp}.sql"
-        
+
         # Ensure backup directory exists
         os.makedirs(os.path.dirname(backup_path), exist_ok=True)
-        
+
         config = get_config()
-        
+
         # For SQLite
         if "sqlite" in config.SQLALCHEMY_DATABASE_URI:
             import shutil
+
             db_path = config.SQLALCHEMY_DATABASE_URI.replace("sqlite:///", "")
             shutil.copy2(db_path, backup_path.replace(".sql", ".db"))
-            logger.info(f"SQLite database backed up to {backup_path.replace('.sql', '.db')}")
-        
+            logger.info(
+                f"SQLite database backed up to {backup_path.replace('.sql', '.db')}"
+            )
+
         # For PostgreSQL (would need pg_dump)
         elif "postgresql" in config.SQLALCHEMY_DATABASE_URI:
             logger.warning("PostgreSQL backup requires pg_dump utility")
             # Implementation would use subprocess to call pg_dump
-        
+
         return True
-        
+
     except Exception as e:
         logger.error(f"Error backing up database: {str(e)}")
         return False
@@ -144,16 +155,16 @@ def check_database_health():
     try:
         config = get_config()
         engine = create_engine(config.SQLALCHEMY_DATABASE_URI)
-        
+
         # Test connection
         with engine.connect() as connection:
             result = connection.execute(text("SELECT 1"))
             result.fetchone()
-        
+
         # Check if tables exist
         tables = db.metadata.tables.keys()
         existing_tables = []
-        
+
         with engine.connect() as connection:
             for table_name in tables:
                 try:
@@ -161,17 +172,17 @@ def check_database_health():
                     existing_tables.append(table_name)
                 except:
                     pass
-        
+
         health_status = {
             "connection": "OK",
             "tables_expected": len(tables),
             "tables_existing": len(existing_tables),
-            "missing_tables": list(set(tables) - set(existing_tables))
+            "missing_tables": list(set(tables) - set(existing_tables)),
         }
-        
+
         logger.info(f"Database health check: {health_status}")
         return health_status
-        
+
     except Exception as e:
         logger.error(f"Database health check failed: {str(e)}")
         return {"connection": "FAILED", "error": str(e)}
@@ -179,13 +190,16 @@ def check_database_health():
 
 if __name__ == "__main__":
     import sys
+
+    # Import Flask app factory directly from app.py
     from app import create_app
     
-    app = create_app()
-    
+    # Create app instance with development config
+    app = create_app('development')
+
     with app.app_context():
         command = sys.argv[1] if len(sys.argv) > 1 else "init"
-        
+
         if command == "init":
             print("Initializing database...")
             if create_database():
@@ -196,14 +210,14 @@ if __name__ == "__main__":
                     print("✗ Failed to initialize default data")
             else:
                 print("✗ Failed to create database")
-                
+
         elif command == "migrate":
             print("Running database migrations...")
             if migrate_database():
                 print("✓ Migration completed")
             else:
                 print("✗ Migration failed")
-                
+
         elif command == "reset":
             confirm = input("⚠️  This will delete ALL data. Type 'yes' to confirm: ")
             if confirm.lower() == "yes":
@@ -215,7 +229,7 @@ if __name__ == "__main__":
                     print("✗ Database reset failed")
             else:
                 print("Reset cancelled")
-                
+
         elif command == "backup":
             backup_path = sys.argv[2] if len(sys.argv) > 2 else None
             print(f"Creating database backup...")
@@ -223,18 +237,22 @@ if __name__ == "__main__":
                 print("✓ Backup completed")
             else:
                 print("✗ Backup failed")
-                
+
         elif command == "health":
             print("Checking database health...")
             health = check_database_health()
             if health["connection"] == "OK":
                 print("✓ Database connection OK")
-                print(f"✓ Tables: {health['tables_existing']}/{health['tables_expected']}")
+                print(
+                    f"✓ Tables: {health['tables_existing']}/{health['tables_expected']}"
+                )
                 if health["missing_tables"]:
                     print(f"⚠️  Missing tables: {health['missing_tables']}")
             else:
-                print(f"✗ Database connection failed: {health.get('error', 'Unknown error')}")
-                
+                print(
+                    f"✗ Database connection failed: {health.get('error', 'Unknown error')}"
+                )
+
         else:
             print("Available commands:")
             print("  init    - Initialize database with tables and default data")

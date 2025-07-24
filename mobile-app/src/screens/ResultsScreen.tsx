@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  SafeAreaView,
-  Dimensions,
-  ActivityIndicator,
-  Share,
-} from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList, ScanSession, AnthropometricPredictions, NutritionalStatus } from '@shared/types';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { AnthropometricPredictions, NutritionalStatus, RootStackParamList, ScanSession } from '@shared/types';
+import React, { useEffect, useState } from 'react';
+import {
+    ActivityIndicator,
+    Alert,
+    Dimensions,
+    SafeAreaView,
+    ScrollView,
+    Share,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 
 type ResultsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Results'>;
 type ResultsScreenRouteProp = RouteProp<RootStackParamList, 'Results'>;
