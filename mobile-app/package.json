@@ -5,14 +5,17 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
+    "start:clean": "expo start --clear",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web",
+    "web": "EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0 expo start --web",
+    "web:quiet": "EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0 EXPO_NO_FILE_WATCH=1 expo start --web",
     "eject": "expo eject",
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "dev:macos": "./start_mobile_macos.sh"
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",

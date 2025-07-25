@@ -3,6 +3,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+// Development utilities
+import './src/utils/devUtils';
+
 // Screens
 import ConsentScreen from './src/screens/ConsentScreen';
 import HomeScreen from './src/screens/HomeScreen';
@@ -15,11 +18,15 @@ import WelcomeScreen from './src/screens/WelcomeScreen';
 import { AuthProvider } from './src/services/AuthService';
 import { DataProvider } from './src/services/DataService';
 
+// Development components
+import DevComponent from './src/components/DevComponent';
+
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
     <SafeAreaProvider>
+      <DevComponent />
       <AuthProvider>
         <DataProvider>
           <NavigationContainer>
