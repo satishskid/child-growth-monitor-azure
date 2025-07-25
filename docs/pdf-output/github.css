@@ -1,0 +1,226 @@
+/* GitHub-inspired CSS for professional documentation */
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    color: #24292e;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 45px;
+    background-color: #ffffff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+    color: #24292e;
+}
+
+h1 {
+    font-size: 2em;
+    border-bottom: 1px solid #eaecef;
+    padding-bottom: 0.3em;
+}
+
+h2 {
+    font-size: 1.5em;
+    border-bottom: 1px solid #eaecef;
+    padding-bottom: 0.3em;
+}
+
+h3 {
+    font-size: 1.25em;
+}
+
+h4 {
+    font-size: 1em;
+}
+
+h5 {
+    font-size: 0.875em;
+}
+
+h6 {
+    font-size: 0.85em;
+    color: #6a737d;
+}
+
+p {
+    margin-bottom: 16px;
+}
+
+blockquote {
+    padding: 0 1em;
+    color: #6a737d;
+    border-left: 0.25em solid #dfe2e5;
+    margin: 0 0 16px 0;
+}
+
+ul, ol {
+    padding-left: 2em;
+    margin-bottom: 16px;
+}
+
+li {
+    margin-bottom: 0.25em;
+}
+
+code {
+    padding: 0.2em 0.4em;
+    margin: 0;
+    font-size: 85%;
+    background-color: rgba(27,31,35,0.05);
+    border-radius: 3px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+pre {
+    padding: 16px;
+    overflow: auto;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f6f8fa;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+pre code {
+    display: inline;
+    max-width: auto;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+table th {
+    font-weight: 600;
+    background-color: #f6f8fa;
+}
+
+table th, table td {
+    padding: 6px 13px;
+    border: 1px solid #dfe2e5;
+}
+
+table tr {
+    background-color: #fff;
+    border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+    background-color: #f6f8fa;
+}
+
+#TOC {
+    background-color: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+#TOC ul {
+    list-style-type: none;
+    padding-left: 1em;
+}
+
+#TOC > ul {
+    padding-left: 0;
+}
+
+#TOC a {
+    text-decoration: none;
+    color: #0969da;
+}
+
+#TOC a:hover {
+    text-decoration: underline;
+}
+
+.header-section-number {
+    color: #656d76;
+    margin-right: 0.5em;
+}
+
+a {
+    color: #0969da;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.title {
+    font-size: 2.5em;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+    text-align: center;
+    color: #24292e;
+    border-bottom: 2px solid #0969da;
+    padding-bottom: 0.5em;
+}
+
+.author, .date {
+    text-align: center;
+    color: #656d76;
+    margin-bottom: 1em;
+}
+
+/* Print styles */
+@media print {
+    body {
+        padding: 20px;
+        font-size: 12pt;
+    }
+    
+    h1, h2 {
+        page-break-after: avoid;
+    }
+    
+    pre, blockquote {
+        page-break-inside: avoid;
+    }
+    
+    table {
+        page-break-inside: avoid;
+    }
+}
+
+/* Warning and info boxes */
+.warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    padding: 12px;
+    margin: 16px 0;
+}
+
+.info {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    padding: 12px;
+    margin: 16px 0;
+}
+
+.danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    padding: 12px;
+    margin: 16px 0;
+}
