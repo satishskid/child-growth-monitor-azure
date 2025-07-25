@@ -26,11 +26,9 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
       <ScrollView contentContainerStyle={styles.content}>
         {/* Logo and Header */}
         <View style={styles.header}>
-          <Image
-            source={require('../../assets/logo.png')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+          <View style={styles.logoPlaceholder}>
+            <Text style={styles.logoText}>CGM</Text>
+          </View>
           <Text style={styles.title}>Child Growth Monitor</Text>
           <Text style={styles.subtitle}>
             Fighting malnutrition with smartphone technology
@@ -132,6 +130,20 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     marginBottom: 20,
+  },
+  logoPlaceholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#2E8B57',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  logoText: {
+    color: '#ffffff',
+    fontSize: 28,
+    fontWeight: 'bold',
   },
   title: {
     fontSize: 28,

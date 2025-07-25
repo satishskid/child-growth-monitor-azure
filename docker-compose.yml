@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5002:5002"
+    environment:
+      - FLASK_ENV=development
+      - DATABASE_URL=sqlite:///./cgm_development.db
+      - SECRET_KEY=dev-secret-key-change-in-production
+      - JWT_SECRET_KEY=dev-jwt-secret-change-in-production
+      - CORS_ORIGINS=http://localhost:19006,exp://192.168.1.0:19000
+    volumes:
+      - ./backend:/app
+      - backend_data:/app/instance
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - cgm-network
+
+  ml-service:
+    build: ./ml-service
+    ports:
+      - "8002:8002"
+    environment:
+      - ENVIRONMENT=development
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./ml-service:/app
+      - ml_models:/app/models
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - cgm-network
+
+  # PostgreSQL for production (commented out for development)
+  # postgres:
+  #   image: postgres:15-alpine
+  #   environment:
+  #     POSTGRES_DB: child_growth_monitor
+  #     POSTGRES_USER: cgm_user
+  #     POSTGRES_PASSWORD: secure_password_change_in_production
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   networks:
+  #     - cgm-network
+
+volumes:
+  backend_data:
+  ml_models:
+  # postgres_data:
+
+networks:
+  cgm-network:
+    driver: bridge

@@ -41,4 +41,28 @@ echo "🔗 Or press 'w' to open in web browser"
 echo ""
 
 # Start with increased limits and Metro optimizations
-EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0 npm start
+# Set environment variables to reduce file watching load
+export EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+export EXPO_NO_FILE_WATCH=1
+export WATCHMAN_DISABLE_FILE_WATCH=1
+export EXPO_FORKED_PROCESS_CLEANUP=0
+
+# Try web-first approach if file watching fails
+echo "🌐 Starting web version first (most stable on macOS)..."
+npm run web &
+
+# Wait a moment for web server to start
+sleep 3
+
+# Check if web server started successfully
+if curl -s http://localhost:19006 > /dev/null; then
+    echo "✅ Web server started successfully at http://localhost:19006"
+    echo "🚀 You can now test the app in your browser"
+    echo ""
+    echo "📱 For mobile testing, also starting QR code server..."
+    # Try to start mobile server with reduced file watching
+    EXPO_NO_FILE_WATCH=1 WATCHMAN_DISABLE_FILE_WATCH=1 npm start
+else
+    echo "❌ Web server failed to start, trying standard approach..."
+    npm start
+fi
