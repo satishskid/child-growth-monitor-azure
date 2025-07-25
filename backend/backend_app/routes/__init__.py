@@ -28,6 +28,48 @@ def login():
         if not email or not password:
             return jsonify({"error": "Email and password required"}), 400
 
+        # Hardcoded admin and user credentials for development
+        hardcoded_users = {
+            "skidsadmin": {
+                "password": "skids123",
+                "id": "admin-001",
+                "name": "System Administrator",
+                "role": "admin",
+                "organization": "Child Growth Monitor System"
+            },
+            "skidsu": {
+                "password": "skids123", 
+                "id": "user-001",
+                "name": "Healthcare User",
+                "role": "healthcare_worker",
+                "organization": "Healthcare Facility"
+            }
+        }
+
+        # Check hardcoded credentials first
+        if email in hardcoded_users:
+            hardcoded_user = hardcoded_users[email]
+            if password == hardcoded_user["password"]:
+                # Create access token for hardcoded user
+                access_token = create_access_token(identity=hardcoded_user["id"])
+                
+                return (
+                    jsonify(
+                        {
+                            "access_token": access_token,
+                            "user": {
+                                "id": hardcoded_user["id"],
+                                "email": email,
+                                "name": hardcoded_user["name"],
+                                "role": hardcoded_user["role"],
+                                "organization": hardcoded_user["organization"],
+                            },
+                        }
+                    ),
+                    200,
+                )
+
+        # Fall back to database user lookup
         user = User.query.filter_by(email=email).first()
 
         if not user or not user.check_password(password):
