@@ -54,6 +54,17 @@ def register_error_handlers(app: Flask) -> None:
             'status_code': 404
         }), 404
 
+    @app.errorhandler(405)
+    def method_not_allowed(error: HTTPException) -> tuple[Dict[str, Any], int]:
+        """Handle method not allowed errors."""
+        logger.warning(f"Method not allowed: {request.method} {request.url}")
+        return jsonify({
+            'error': 'Method Not Allowed',
+            'message': f'The {request.method} method is not allowed for this endpoint.',
+            'status_code': 405,
+            'allowed_methods': error.description if hasattr(error, 'description') else 'POST'
+        }), 405
+
     @app.errorhandler(422)
     def unprocessable_entity(error: HTTPException) -> tuple[Dict[str, Any], int]:
         """Handle validation errors."""
