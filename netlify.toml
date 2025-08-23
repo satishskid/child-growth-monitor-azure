@@ -1,0 +1,51 @@
+[build]
+  publish = "web-app/dist"
+  command = "cd web-app && npm install && npm run build:pwa"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
+
+# PWA Configuration
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Content-Type = "application/javascript"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# SPA Routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# API Proxy to Netlify Functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Environment Variables (set in Netlify dashboard)
+# SUPABASE_URL
+# SUPABASE_ANON_KEY
+# JWT_SECRET
+# AZURE_STORAGE_CONNECTION_STRING (optional)
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"

@@ -92,6 +92,13 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       description: 'Generate and export reports',
       onPress: () => Alert.alert('Info', 'Reports feature coming soon'),
     },
+    {
+      id: '5',
+      icon: '📊',
+      title: 'Batch Upload',
+      description: 'Import multiple children data',
+      onPress: () => navigation.navigate('BatchUpload'),
+    },
   ];
 
   return (

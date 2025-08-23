@@ -13,6 +13,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import ResultsScreen from './src/screens/ResultsScreen';
 import ScanningScreen from './src/screens/ScanningScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
+import BatchUploadScreen from './src/screens/BatchUploadScreen';
 
 // Services
 import { AuthProvider } from './src/services/AuthService';
@@ -74,6 +75,11 @@ export default function App() {
                 name="Results"
                 component={ResultsScreen}
                 options={{ title: 'Scan Results' }}
+              />
+              <Stack.Screen
+                name="BatchUpload"
+                component={BatchUploadScreen}
+                options={{ title: 'Batch Upload' }}
               />
             </Stack.Navigator>
           </NavigationContainer>
