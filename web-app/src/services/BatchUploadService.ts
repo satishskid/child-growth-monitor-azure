@@ -1,5 +1,5 @@
 // BatchUploadService for client-side CSV/Excel import and data management
-import * as XLSX from 'xlsx';
+// import * as XLSX from 'xlsx'; // Temporarily disabled due to WASM build issues
 import QRCode from 'qrcode';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -64,51 +64,26 @@ export class BatchUploadService {
    */
   async importFromFile(file: File): Promise<BatchUploadResult> {
     try {
-      const arrayBuffer = await file.arrayBuffer();
-      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
-
-      if (rawData.length < 2) {
-        return {
-          success: false,
-          imported: 0,
-          errors: ['File must contain at least a header row and one data row'],
-          children: []
-        };
+      // Temporary fix: Handle CSV files only for now
+      if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
+        const text = await file.text();
+        const rawData = this.parseCSV(text);
+        return this.processRawData(rawData);
       }
-
-      const headers = rawData[0].map(h => String(h).toLowerCase().trim());
-      const dataRows = rawData.slice(1);
-
-      const children: BatchChild[] = [];
-      const errors: string[] = [];
-
-      for (let i = 0; i < dataRows.length; i++) {
-        const row = dataRows[i];
-        const rowNum = i + 2; // +2 because we start from row 2 (after header)
-
-        try {
-          const child = await this.parseChildFromRow(headers, row, rowNum);
-          if (child) {
-            children.push(child);
-          }
-        } catch (error) {
-          errors.push(`Row ${rowNum}: ${error instanceof Error ? error.message : String(error)}`);
-        }
-      }
-
-      // Save to storage
-      if (children.length > 0) {
-        await this.saveBatchChildren(children);
-      }
-
+      
+      // For Excel files, return error for now
       return {
-        success: children.length > 0,
-        imported: children.length,
-        errors,
-        children
+        success: false,
+        imported: 0,
+        errors: ['Excel files temporarily not supported. Please use CSV format.'],
+        children: []
       };
+      
+      // TODO: Re-enable Excel support after fixing WASM build issues
+      // const arrayBuffer = await file.arrayBuffer();
+      // const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      // const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      // const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
     } catch (error) {
       return {
         success: false,
@@ -117,6 +92,79 @@ export class BatchUploadService {
         children: []
       };
     }
+  }
+
+  /**
+   * Parse CSV text into array of arrays
+   */
+  private parseCSV(text: string): any[][] {
+    const lines = text.split('\n').filter(line => line.trim());
+    return lines.map(line => {
+      // Simple CSV parsing - handles basic cases
+      const values = [];
+      let current = '';
+      let inQuotes = false;
+      
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          values.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      values.push(current.trim());
+      return values;
+    });
+  }
+
+  /**
+   * Process raw data array into BatchUploadResult
+   */
+  private async processRawData(rawData: any[][]): Promise<BatchUploadResult> {
+    if (rawData.length < 2) {
+      return {
+        success: false,
+        imported: 0,
+        errors: ['File must contain at least a header row and one data row'],
+        children: []
+      };
+    }
+
+    const headers = rawData[0].map(h => String(h).toLowerCase().trim());
+    const dataRows = rawData.slice(1);
+
+    const children: BatchChild[] = [];
+    const errors: string[] = [];
+
+    for (let i = 0; i < dataRows.length; i++) {
+      const row = dataRows[i];
+      const rowNum = i + 2; // +2 because we start from row 2 (after header)
+
+      try {
+        const child = await this.parseChildFromRow(headers, row, rowNum);
+        if (child) {
+          children.push(child);
+        }
+      } catch (error) {
+        errors.push(`Row ${rowNum}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
+
+    // Save to storage
+    if (children.length > 0) {
+      await this.saveBatchChildren(children);
+    }
+
+    return {
+      success: children.length > 0,
+      imported: children.length,
+      errors,
+      children
+    };
   }
 
   /**
@@ -291,8 +339,11 @@ export class BatchUploadService {
 
   /**
    * Export children and measurements to Excel
+   * Temporarily disabled due to WASM build issues with XLSX
    */
   async exportToExcel(): Promise<void> {
+    throw new Error('Excel export temporarily disabled. Please use CSV export instead.');
+    /*
     try {
       const children = await this.getAllBatchChildren();
       
@@ -355,23 +406,32 @@ export class BatchUploadService {
     } catch (error) {
       throw new Error(`Failed to export to Excel: ${error instanceof Error ? error.message : String(error)}`);
     }
+    */
   }
 
   /**
    * Generate sample CSV template
+   * Temporarily disabled due to WASM build issues with XLSX
    */
   generateSampleCSV(): void {
-    const sampleData = [
-      ['Name', 'Date of Birth', 'Gender', 'Guardian Name', 'Guardian Phone', 'Location', 'Notes'],
-      ['John Doe', '2020-01-15', 'Male', 'Jane Doe', '+1234567890', 'Village A', 'First screening'],
-      ['Mary Smith', '2019-06-20', 'Female', 'Bob Smith', '+0987654321', 'Village B', 'Follow-up needed'],
-      ['Ahmed Ali', '2021-03-10', 'Male', 'Fatima Ali', '+1122334455', 'Village C', '']
-    ];
+    // Create CSV content manually
+    const csvContent = [
+      'Name,Date of Birth,Gender,Guardian Name,Guardian Phone,Location,Notes',
+      'John Doe,2020-01-15,Male,Jane Doe,+1234567890,Village A,First screening',
+      'Mary Smith,2019-06-20,Female,Bob Smith,+0987654321,Village B,Follow-up needed',
+      'Ahmed Ali,2021-03-10,Male,Fatima Ali,+1122334455,Village C,'
+    ].join('\n');
 
-    const worksheet = XLSX.utils.aoa_to_sheet(sampleData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sample');
-    XLSX.writeFile(workbook, 'cgm-batch-upload-template.csv');
+    // Create and download CSV file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'cgm-batch-upload-template.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   /**

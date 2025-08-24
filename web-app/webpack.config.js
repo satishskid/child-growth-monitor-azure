@@ -10,6 +10,8 @@ module.exports = async function (env, argv) {
     argv
   );
 
+  // Removed Node.js polyfills that were causing MIME issues
+
   // Optimize development experience
   if (config.mode === 'development') {
     // Use simple stats configuration

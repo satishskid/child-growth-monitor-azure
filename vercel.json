@@ -6,7 +6,7 @@
       "src": "web-app/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "buildCommand": "cd web-app && npm run build:pwa",
+        "buildCommand": "cd web-app && npm run pwa:build",
         "outputDirectory": "web-app/dist"
       }
     }
