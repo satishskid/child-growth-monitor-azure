@@ -4,10 +4,9 @@
     "slug": "child-growth-monitor",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/favicon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -25,7 +24,6 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "org.childgrowthmonitor.app",
@@ -51,12 +49,12 @@
         "serviceWorker": "./public/service-worker.js",
         "icons": [
           {
-            "src": "./assets/icon-192x192.png",
+            "src": "./public/icons/icon-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
           },
           {
-            "src": "./assets/icon-512x512.png",
+            "src": "./public/icons/icon-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
           }

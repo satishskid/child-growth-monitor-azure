@@ -1,0 +1,21 @@
+{
+  "name": "Child Growth Monitor PWA",
+  "short_name": "CGM PWA",
+  "description": "A Progressive Web App for monitoring child growth.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2E8B57",
+  "icons": [
+    {
+      "src": "icons/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
