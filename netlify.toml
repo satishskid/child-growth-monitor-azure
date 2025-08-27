@@ -1,6 +1,6 @@
 [build]
-  publish = "web-app/dist"
-  command = "cd web-app && npm install && npm run build:pwa"
+  publish = "web-app/web-build"
+  command = "cd web-app && npm install && npm run pwa:build"
 
 [build.environment]
   NODE_VERSION = "18"
