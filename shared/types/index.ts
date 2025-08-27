@@ -152,6 +152,7 @@ export type RootStackParamList = {
   Consent: { childId?: string };
   Scanning: { childId: string; consentId: string };
   Results: { sessionId: string };
+  BatchUpload: undefined;
 };
 
 // Form types

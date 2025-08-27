@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenCV.js WebAssembly Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .warning { color: orange; }
+        .info { color: blue; }
+        canvas {
+            border: 1px solid #ccc;
+            margin: 10px 0;
+        }
+        #log {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>OpenCV.js WebAssembly Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="log">Loading OpenCV.js...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Image Processing Demo</h2>
+        <canvas id="canvasInput" width="320" height="240"></canvas>
+        <canvas id="canvasOutput" width="320" height="240"></canvas>
+        <br>
+        <button onclick="processImage()">Process Test Image</button>
+    </div>
+
+    <!-- Load OpenCV.js -->
+    <script async src="node_modules/opencv.js/opencv.js" onload="onOpenCvReady();" onerror="onOpenCvError();"></script>
+    
+    <script>
+        let cv = null;
+        const log = document.getElementById('log');
+        
+        function logMessage(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type;
+            log.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            log.scrollTop = log.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function onOpenCvReady() {
+            cv = window.cv;
+            logMessage('✅ OpenCV.js loaded successfully!', 'success');
+            runTests();
+        }
+        
+        function onOpenCvError() {
+            logMessage('❌ Failed to load OpenCV.js', 'error');
+            logMessage('Check if opencv.js is properly installed in node_modules', 'error');
+        }
+        
+        function runTests() {
+            logMessage('\n=== OpenCV.js WebAssembly Tests ===', 'info');
+            
+            // Test 1: Basic OpenCV functionality
+            logMessage('\n1. Testing Basic OpenCV Functionality...', 'info');
+            try {
+                logMessage(`OpenCV.js version: ${cv.getBuildInformation()}`, 'success');
+                logMessage('✅ OpenCV build information accessible', 'success');
+            } catch (error) {
+                logMessage(`❌ OpenCV build info error: ${error.message}`, 'error');
+            }
+            
+            // Test 2: Matrix operations
+            logMessage('\n2. Testing Matrix Operations...', 'info');
+            try {
+                const mat = new cv.Mat(3, 3, cv.CV_8UC1);
+                mat.setTo(new cv.Scalar(128));
+                logMessage(`✅ Created 3x3 matrix with value 128`, 'success');
+                logMessage(`Matrix size: ${mat.rows}x${mat.cols}`, 'info');
+                mat.delete();
+                logMessage('✅ Matrix memory cleaned up', 'success');
+            } catch (error) {
+                logMessage(`❌ Matrix operations error: ${error.message}`, 'error');
+            }
+            
+            // Test 3: Image processing capabilities
+            logMessage('\n3. Testing Image Processing Capabilities...', 'info');
+            try {
+                // Create a test image
+                const src = new cv.Mat(100, 100, cv.CV_8UC3);
+                src.setTo(new cv.Scalar(255, 0, 0)); // Blue image
+                
+                // Convert to grayscale
+                const gray = new cv.Mat();
+                cv.cvtColor(src, gray, cv.COLOR_BGR2GRAY);
+                logMessage('✅ Color space conversion (BGR to Grayscale)', 'success');
+                
+                // Apply Gaussian blur
+                const blurred = new cv.Mat();
+                cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0);
+                logMessage('✅ Gaussian blur filter applied', 'success');
+                
+                // Edge detection
+                const edges = new cv.Mat();
+                cv.Canny(blurred, edges, 50, 150);
+                logMessage('✅ Canny edge detection', 'success');
+                
+                // Cleanup
+                src.delete();
+                gray.delete();
+                blurred.delete();
+                edges.delete();
+                logMessage('✅ All matrices cleaned up', 'success');
+            } catch (error) {
+                logMessage(`❌ Image processing error: ${error.message}`, 'error');
+            }
+            
+            // Test 4: Contour detection (relevant for pose estimation)
+            logMessage('\n4. Testing Contour Detection...', 'info');
+            try {
+                // Create a simple shape
+                const src = cv.Mat.zeros(200, 200, cv.CV_8UC1);
+                cv.rectangle(src, new cv.Point(50, 50), new cv.Point(150, 150), new cv.Scalar(255), -1);
+                
+                // Find contours
+                const contours = new cv.MatVector();
+                const hierarchy = new cv.Mat();
+                cv.findContours(src, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+                
+                logMessage(`✅ Found ${contours.size()} contours`, 'success');
+                
+                // Cleanup
+                src.delete();
+                contours.delete();
+                hierarchy.delete();
+                logMessage('✅ Contour detection test completed', 'success');
+            } catch (error) {
+                logMessage(`❌ Contour detection error: ${error.message}`, 'error');
+            }
+            
+            // Test 5: WebAssembly performance
+            logMessage('\n5. Testing WebAssembly Performance...', 'info');
+            try {
+                const startTime = performance.now();
+                
+                // Perform multiple operations
+                for (let i = 0; i < 100; i++) {
+                    const mat = new cv.Mat(50, 50, cv.CV_8UC1);
+                    mat.setTo(new cv.Scalar(i));
+                    mat.delete();
+                }
+                
+                const endTime = performance.now();
+                const duration = (endTime - startTime).toFixed(2);
+                logMessage(`✅ 100 matrix operations completed in ${duration}ms`, 'success');
+                
+                if (duration < 100) {
+                    logMessage('✅ Performance is good (< 100ms)', 'success');
+                } else {
+                    logMessage('⚠️ Performance could be better (> 100ms)', 'warning');
+                }
+            } catch (error) {
+                logMessage(`❌ Performance test error: ${error.message}`, 'error');
+            }
+            
+            logMessage('\n=== OpenCV.js Tests Complete ===', 'info');
+            logMessage('\nWebAssembly components are ready for pose estimation!', 'success');
+        }
+        
+        function processImage() {
+            if (!cv) {
+                logMessage('❌ OpenCV.js not loaded yet', 'error');
+                return;
+            }
+            
+            try {
+                const canvas = document.getElementById('canvasInput');
+                const ctx = canvas.getContext('2d');
+                
+                // Draw a simple test pattern
+                ctx.fillStyle = 'blue';
+                ctx.fillRect(0, 0, 320, 240);
+                ctx.fillStyle = 'white';
+                ctx.fillRect(50, 50, 220, 140);
+                ctx.fillStyle = 'red';
+                ctx.beginPath();
+                ctx.arc(160, 120, 30, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // Process with OpenCV
+                const src = cv.imread(canvas);
+                const dst = new cv.Mat();
+                
+                // Apply edge detection
+                cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY);
+                cv.Canny(dst, dst, 50, 150);
+                
+                // Display result
+                cv.imshow('canvasOutput', dst);
+                
+                // Cleanup
+                src.delete();
+                dst.delete();
+                
+                logMessage('✅ Image processing demo completed', 'success');
+            } catch (error) {
+                logMessage(`❌ Image processing demo error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Handle case where OpenCV.js is already loaded
+        if (window.cv && window.cv.Mat) {
+            onOpenCvReady();
+        }
+    </script>
+</body>
+</html>

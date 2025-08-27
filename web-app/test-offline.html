@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Functionality Test - Child Growth Monitor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .cache-info {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .network-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .online {
+            background-color: #28a745;
+            color: white;
+        }
+        .offline {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="networkStatus" class="network-status"></div>
+    
+    <h1>🔌 Offline Functionality Test</h1>
+    <p>This page tests the offline capabilities and service worker functionality of the Child Growth Monitor PWA.</p>
+    
+    <div class="test-container">
+        <h2>🔧 Service Worker Tests</h2>
+        <button onclick="testServiceWorkerRegistration()">Test Service Worker Registration</button>
+        <button onclick="testServiceWorkerUpdate()">Test Service Worker Update</button>
+        <button onclick="testCacheManagement()">Test Cache Management</button>
+        <div id="serviceWorkerResults"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>📦 Cache Tests</h2>
+        <button onclick="testCacheStorage()">Test Cache Storage</button>
+        <button onclick="listCachedResources()">List Cached Resources</button>
+        <button onclick="testOfflineResourceAccess()">Test Offline Resource Access</button>
+        <div id="cacheResults"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>🌐 Network Tests</h2>
+        <button onclick="testNetworkDetection()">Test Network Detection</button>
+        <button onclick="simulateOfflineMode()">Simulate Offline Mode</button>
+        <button onclick="testOfflineDataStorage()">Test Offline Data Storage</button>
+        <div id="networkResults"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>📱 PWA Offline Features</h2>
+        <button onclick="testManifestOffline()">Test Manifest in Offline Mode</button>
+        <button onclick="testAppShellCaching()">Test App Shell Caching</button>
+        <button onclick="runComprehensiveOfflineTest()">Run Comprehensive Test</button>
+        <div id="pwaResults"></div>
+    </div>
+
+    <script>
+        // Network status monitoring
+        function updateNetworkStatus() {
+            const statusEl = document.getElementById('networkStatus');
+            if (navigator.onLine) {
+                statusEl.textContent = '🟢 ONLINE';
+                statusEl.className = 'network-status online';
+            } else {
+                statusEl.textContent = '🔴 OFFLINE';
+                statusEl.className = 'network-status offline';
+            }
+        }
+
+        // Initialize network status
+        updateNetworkStatus();
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+
+        // Helper function to display results
+        function displayResult(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${type}`;
+            resultDiv.innerHTML = message;
+            container.appendChild(resultDiv);
+        }
+
+        // Service Worker Tests
+        async function testServiceWorkerRegistration() {
+            const containerId = 'serviceWorkerResults';
+            
+            if (!('serviceWorker' in navigator)) {
+                displayResult(containerId, '❌ Service Worker not supported in this browser', 'error');
+                return;
+            }
+
+            try {
+                const registration = await navigator.serviceWorker.register('/service-worker.js');
+                displayResult(containerId, `✅ Service Worker registered successfully<br>Scope: ${registration.scope}`, 'success');
+                
+                // Check if service worker is active
+                if (registration.active) {
+                    displayResult(containerId, '✅ Service Worker is active and running', 'success');
+                } else if (registration.installing) {
+                    displayResult(containerId, '⏳ Service Worker is installing...', 'warning');
+                } else if (registration.waiting) {
+                    displayResult(containerId, '⏳ Service Worker is waiting to activate', 'warning');
+                }
+            } catch (error) {
+                displayResult(containerId, `❌ Service Worker registration failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testServiceWorkerUpdate() {
+            const containerId = 'serviceWorkerResults';
+            
+            try {
+                const registration = await navigator.serviceWorker.getRegistration();
+                if (registration) {
+                    await registration.update();
+                    displayResult(containerId, '✅ Service Worker update check completed', 'success');
+                } else {
+                    displayResult(containerId, '❌ No Service Worker registration found', 'error');
+                }
+            } catch (error) {
+                displayResult(containerId, `❌ Service Worker update failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Cache Tests
+        async function testCacheStorage() {
+            const containerId = 'cacheResults';
+            
+            if (!('caches' in window)) {
+                displayResult(containerId, '❌ Cache API not supported', 'error');
+                return;
+            }
+
+            try {
+                const cacheName = 'cgm-pwa-cache-v1';
+                const cache = await caches.open(cacheName);
+                
+                // Test adding a resource to cache
+                const testUrl = window.location.href;
+                await cache.add(testUrl);
+                
+                // Test retrieving from cache
+                const cachedResponse = await cache.match(testUrl);
+                if (cachedResponse) {
+                    displayResult(containerId, '✅ Cache storage is working correctly', 'success');
+                } else {
+                    displayResult(containerId, '❌ Failed to retrieve from cache', 'error');
+                }
+            } catch (error) {
+                displayResult(containerId, `❌ Cache storage test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function listCachedResources() {
+            const containerId = 'cacheResults';
+            
+            try {
+                const cacheNames = await caches.keys();
+                displayResult(containerId, `📦 Found ${cacheNames.length} cache(s): ${cacheNames.join(', ')}`, 'info');
+                
+                for (const cacheName of cacheNames) {
+                    const cache = await caches.open(cacheName);
+                    const requests = await cache.keys();
+                    const urls = requests.map(req => req.url);
+                    
+                    displayResult(containerId, 
+                        `<div class="cache-info">
+                            <strong>${cacheName}</strong> (${requests.length} resources):<br>
+                            ${urls.slice(0, 10).join('<br>')}
+                            ${urls.length > 10 ? '<br>... and ' + (urls.length - 10) + ' more' : ''}
+                        </div>`, 'info');
+                }
+            } catch (error) {
+                displayResult(containerId, `❌ Failed to list cached resources: ${error.message}`, 'error');
+            }
+        }
+
+        async function testOfflineResourceAccess() {
+            const containerId = 'cacheResults';
+            
+            try {
+                // Test accessing cached resources
+                const testUrls = ['/', '/index.html', window.location.href];
+                let successCount = 0;
+                
+                for (const url of testUrls) {
+                    try {
+                        const response = await caches.match(url);
+                        if (response) {
+                            successCount++;
+                            displayResult(containerId, `✅ ${url} is available in cache`, 'success');
+                        } else {
+                            displayResult(containerId, `⚠️ ${url} not found in cache`, 'warning');
+                        }
+                    } catch (error) {
+                        displayResult(containerId, `❌ Error accessing ${url}: ${error.message}`, 'error');
+                    }
+                }
+                
+                displayResult(containerId, `📊 Cache accessibility: ${successCount}/${testUrls.length} resources available offline`, 'info');
+            } catch (error) {
+                displayResult(containerId, `❌ Offline resource access test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Network Tests
+        async function testNetworkDetection() {
+            const containerId = 'networkResults';
+            
+            displayResult(containerId, `🌐 Navigator.onLine: ${navigator.onLine}`, 'info');
+            displayResult(containerId, `📡 Connection type: ${navigator.connection?.effectiveType || 'unknown'}`, 'info');
+            
+            // Test actual network connectivity
+            try {
+                const response = await fetch('/manifest.json', { 
+                    method: 'HEAD',
+                    cache: 'no-cache'
+                });
+                displayResult(containerId, '✅ Network connectivity confirmed', 'success');
+            } catch (error) {
+                displayResult(containerId, `❌ Network test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function simulateOfflineMode() {
+            const containerId = 'networkResults';
+            
+            displayResult(containerId, '🔌 Simulating offline mode...', 'warning');
+            displayResult(containerId, 'ℹ️ To fully test offline mode, use browser DevTools > Network > Offline', 'info');
+            
+            // Test service worker fetch interception
+            try {
+                const response = await fetch('/test-offline-resource', {
+                    cache: 'no-cache'
+                });
+                
+                if (response.ok) {
+                    displayResult(containerId, '✅ Service worker is intercepting requests', 'success');
+                } else {
+                    displayResult(containerId, '⚠️ Service worker may not be intercepting all requests', 'warning');
+                }
+            } catch (error) {
+                displayResult(containerId, `ℹ️ Expected offline behavior: ${error.message}`, 'info');
+            }
+        }
+
+        async function testOfflineDataStorage() {
+            const containerId = 'networkResults';
+            
+            try {
+                // Test localStorage
+                const testKey = 'cgm-offline-test';
+                const testData = { timestamp: Date.now(), test: 'offline-storage' };
+                
+                localStorage.setItem(testKey, JSON.stringify(testData));
+                const retrieved = JSON.parse(localStorage.getItem(testKey));
+                
+                if (retrieved && retrieved.test === 'offline-storage') {
+                    displayResult(containerId, '✅ LocalStorage is working for offline data', 'success');
+                    localStorage.removeItem(testKey);
+                } else {
+                    displayResult(containerId, '❌ LocalStorage test failed', 'error');
+                }
+                
+                // Test IndexedDB availability
+                if ('indexedDB' in window) {
+                    displayResult(containerId, '✅ IndexedDB is available for complex offline storage', 'success');
+                } else {
+                    displayResult(containerId, '❌ IndexedDB not available', 'error');
+                }
+            } catch (error) {
+                displayResult(containerId, `❌ Offline data storage test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // PWA Offline Tests
+        async function testManifestOffline() {
+            const containerId = 'pwaResults';
+            
+            try {
+                const response = await fetch('/manifest.json');
+                if (response.ok) {
+                    const manifest = await response.json();
+                    displayResult(containerId, `✅ PWA Manifest accessible (${manifest.name})`, 'success');
+                    
+                    // Check if manifest is cached
+                    const cachedManifest = await caches.match('/manifest.json');
+                    if (cachedManifest) {
+                        displayResult(containerId, '✅ PWA Manifest is cached for offline access', 'success');
+                    } else {
+                        displayResult(containerId, '⚠️ PWA Manifest may not be cached', 'warning');
+                    }
+                } else {
+                    displayResult(containerId, '❌ PWA Manifest not accessible', 'error');
+                }
+            } catch (error) {
+                displayResult(containerId, `❌ Manifest offline test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAppShellCaching() {
+            const containerId = 'pwaResults';
+            
+            const appShellResources = ['/', '/index.html'];
+            let cachedCount = 0;
+            
+            for (const resource of appShellResources) {
+                try {
+                    const cachedResponse = await caches.match(resource);
+                    if (cachedResponse) {
+                        cachedCount++;
+                        displayResult(containerId, `✅ ${resource} is cached`, 'success');
+                    } else {
+                        displayResult(containerId, `⚠️ ${resource} not found in cache`, 'warning');
+                    }
+                } catch (error) {
+                    displayResult(containerId, `❌ Error checking ${resource}: ${error.message}`, 'error');
+                }
+            }
+            
+            displayResult(containerId, `📊 App Shell Caching: ${cachedCount}/${appShellResources.length} resources cached`, 'info');
+        }
+
+        async function runComprehensiveOfflineTest() {
+            const containerId = 'pwaResults';
+            
+            displayResult(containerId, '🚀 Running comprehensive offline functionality test...', 'info');
+            
+            let passedTests = 0;
+            let totalTests = 0;
+            
+            // Test 1: Service Worker
+            totalTests++;
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    if (registration && registration.active) {
+                        passedTests++;
+                        displayResult(containerId, '✅ Service Worker is active', 'success');
+                    } else {
+                        displayResult(containerId, '❌ Service Worker not active', 'error');
+                    }
+                } catch (error) {
+                    displayResult(containerId, '❌ Service Worker check failed', 'error');
+                }
+            } else {
+                displayResult(containerId, '❌ Service Worker not supported', 'error');
+            }
+            
+            // Test 2: Cache API
+            totalTests++;
+            if ('caches' in window) {
+                try {
+                    const cacheNames = await caches.keys();
+                    if (cacheNames.length > 0) {
+                        passedTests++;
+                        displayResult(containerId, `✅ Cache API working (${cacheNames.length} caches)`, 'success');
+                    } else {
+                        displayResult(containerId, '⚠️ No caches found', 'warning');
+                    }
+                } catch (error) {
+                    displayResult(containerId, '❌ Cache API test failed', 'error');
+                }
+            } else {
+                displayResult(containerId, '❌ Cache API not supported', 'error');
+            }
+            
+            // Test 3: Offline Storage
+            totalTests++;
+            try {
+                localStorage.setItem('test', 'value');
+                localStorage.removeItem('test');
+                passedTests++;
+                displayResult(containerId, '✅ Offline storage available', 'success');
+            } catch (error) {
+                displayResult(containerId, '❌ Offline storage test failed', 'error');
+            }
+            
+            // Test 4: Network Detection
+            totalTests++;
+            if ('onLine' in navigator) {
+                passedTests++;
+                displayResult(containerId, `✅ Network detection available (currently ${navigator.onLine ? 'online' : 'offline'})`, 'success');
+            } else {
+                displayResult(containerId, '❌ Network detection not available', 'error');
+            }
+            
+            // Final Results
+            const percentage = Math.round((passedTests / totalTests) * 100);
+            const resultType = percentage >= 75 ? 'success' : percentage >= 50 ? 'warning' : 'error';
+            
+            displayResult(containerId, 
+                `<strong>📊 Comprehensive Offline Test Results: ${passedTests}/${totalTests} tests passed (${percentage}%)</strong>`, 
+                resultType
+            );
+            
+            if (percentage === 100) {
+                displayResult(containerId, '🎉 Excellent! Your PWA is fully ready for offline use.', 'success');
+            } else if (percentage >= 75) {
+                displayResult(containerId, '👍 Good! Your PWA has solid offline capabilities with minor issues.', 'success');
+            } else if (percentage >= 50) {
+                displayResult(containerId, '⚠️ Your PWA has basic offline support but needs improvement.', 'warning');
+            } else {
+                displayResult(containerId, '❌ Your PWA needs significant work to support offline functionality.', 'error');
+            }
+        }
+
+        // Auto-run basic tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testServiceWorkerRegistration();
+                testNetworkDetection();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

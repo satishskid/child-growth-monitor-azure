@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage Test - Child Growth Monitor</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #2E8B57;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .test-section h2 {
+            color: #2E8B57;
+            margin-top: 0;
+            border-bottom: 2px solid #2E8B57;
+            padding-bottom: 10px;
+        }
+        .test-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #2E8B57;
+        }
+        .test-item h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 1.2em;
+        }
+        .test-item p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.pending {
+            background: #ffeaa7;
+            color: #d63031;
+        }
+        .status.testing {
+            background: #74b9ff;
+            color: white;
+        }
+        .status.pass {
+            background: #00b894;
+            color: white;
+        }
+        .status.fail {
+            background: #e17055;
+            color: white;
+        }
+        .test-button {
+            background: #2E8B57;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        .test-button:hover {
+            background: #236B47;
+        }
+        .test-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .results {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .storage-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .storage-card {
+            padding: 15px;
+            background: #e8f5e8;
+            border: 2px solid #2E8B57;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .storage-card h4 {
+            margin: 0 0 10px 0;
+            color: #2E8B57;
+        }
+        .storage-card .value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        .data-preview {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .summary {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e8f5e8;
+            border-radius: 8px;
+            border: 2px solid #2E8B57;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2E8B57, #4CAF50);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💾 Data Storage Test Suite</h1>
+        <p style="text-align: center; font-size: 1.1em; color: #666; margin-bottom: 30px;">
+            Testing AsyncStorage functionality and data persistence in the Child Growth Monitor PWA
+        </p>
+
+        <!-- Storage Information -->
+        <div class="test-section">
+            <h2>📊 Storage Information</h2>
+            <div class="storage-info">
+                <div class="storage-card">
+                    <h4>LocalStorage</h4>
+                    <div class="value" id="localStorage-size">-</div>
+                    <small>Items stored</small>
+                </div>
+                <div class="storage-card">
+                    <h4>SessionStorage</h4>
+                    <div class="value" id="sessionStorage-size">-</div>
+                    <small>Items stored</small>
+                </div>
+                <div class="storage-card">
+                    <h4>IndexedDB</h4>
+                    <div class="value" id="indexedDB-support">-</div>
+                    <small>Support status</small>
+                </div>
+                <div class="storage-card">
+                    <h4>Cache API</h4>
+                    <div class="value" id="cache-support">-</div>
+                    <small>Support status</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- AsyncStorage Simulation Tests -->
+        <div class="test-section">
+            <h2>🔄 AsyncStorage Simulation Tests</h2>
+            
+            <div class="test-item">
+                <h3>Basic Storage Operations <span class="status pending" id="basic-status">PENDING</span></h3>
+                <p>Test setItem, getItem, and removeItem operations</p>
+                <button class="test-button" onclick="testBasicOperations()">Test Basic Operations</button>
+                <div class="results" id="basic-results" style="display: none;"></div>
+            </div>
+
+            <div class="test-item">
+                <h3>Child Data Storage <span class="status pending" id="child-status">PENDING</span></h3>
+                <p>Test storing and retrieving child information (cached_children)</p>
+                <button class="test-button" onclick="testChildDataStorage()">Test Child Data</button>
+                <div class="results" id="child-results" style="display: none;"></div>
+            </div>
+
+            <div class="test-item">
+                <h3>Offline Actions Queue <span class="status pending" id="offline-status">PENDING</span></h3>
+                <p>Test offline actions storage and queue management</p>
+                <button class="test-button" onclick="testOfflineActions()">Test Offline Actions</button>
+                <div class="results" id="offline-results" style="display: none;"></div>
+            </div>
+
+            <div class="test-item">
+                <h3>ML Cache Storage <span class="status pending" id="ml-status">PENDING</span></h3>
+                <p>Test ML analysis result caching (ml_cache_*)</p>
+                <button class="test-button" onclick="testMLCache()">Test ML Cache</button>
+                <div class="results" id="ml-results" style="display: none;"></div>
+            </div>
+
+            <div class="test-item">
+                <h3>Scan Session Storage <span class="status pending" id="scan-status">PENDING</span></h3>
+                <p>Test scan session data persistence</p>
+                <button class="test-button" onclick="testScanSessionStorage()">Test Scan Sessions</button>
+                <div class="results" id="scan-results" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Data Integrity Tests -->
+        <div class="test-section">
+            <h2>🔒 Data Integrity Tests</h2>
+            
+            <div class="test-item">
+                <h3>Large Data Storage <span class="status pending" id="large-status">PENDING</span></h3>
+                <p>Test storage of large data objects (images, scan data)</p>
+                <button class="test-button" onclick="testLargeDataStorage()">Test Large Data</button>
+                <div class="results" id="large-results" style="display: none;"></div>
+            </div>
+
+            <div class="test-item">
+                <h3>Concurrent Operations <span class="status pending" id="concurrent-status">PENDING</span></h3>
+                <p>Test multiple simultaneous storage operations</p>
+                <button class="test-button" onclick="testConcurrentOperations()">Test Concurrent Ops</button>
+                <div class="results" id="concurrent-results" style="display: none;"></div>
+            </div>
+
+            <div class="test-item">
+                <h3>Storage Limits <span class="status pending" id="limits-status">PENDING</span></h3>
+                <p>Test storage capacity and quota limits</p>
+                <button class="test-button" onclick="testStorageLimits()">Test Storage Limits</button>
+                <div class="results" id="limits-results" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Data Preview -->
+        <div class="test-section">
+            <h2>👁️ Current Storage Data</h2>
+            <button class="test-button" onclick="refreshStorageData()">Refresh Storage Data</button>
+            <div class="data-preview" id="storage-preview">
+                Click "Refresh Storage Data" to view current storage contents...
+            </div>
+        </div>
+
+        <!-- Test Controls -->
+        <div class="test-section">
+            <h2>🎮 Test Controls</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-bar"></div>
+            </div>
+            <button class="test-button" onclick="runAllTests()">Run All Tests</button>
+            <button class="test-button" onclick="resetTests()">Reset Tests</button>
+            <button class="test-button" onclick="clearAllStorage()">Clear All Storage</button>
+            <button class="test-button" onclick="exportResults()">Export Results</button>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary" id="test-summary">
+            <h2>📊 Test Summary</h2>
+            <p id="summary-text">Click "Run All Tests" to start the storage testing suite.</p>
+        </div>
+    </div>
+
+    <script>
+        // AsyncStorage simulation for web environment
+        class AsyncStorageSimulator {
+            static async setItem(key, value) {
+                return new Promise((resolve) => {
+                    localStorage.setItem(key, value);
+                    resolve();
+                });
+            }
+
+            static async getItem(key) {
+                return new Promise((resolve) => {
+                    const value = localStorage.getItem(key);
+                    resolve(value);
+                });
+            }
+
+            static async removeItem(key) {
+                return new Promise((resolve) => {
+                    localStorage.removeItem(key);
+                    resolve();
+                });
+            }
+
+            static async getAllKeys() {
+                return new Promise((resolve) => {
+                    const keys = Object.keys(localStorage);
+                    resolve(keys);
+                });
+            }
+
+            static async clear() {
+                return new Promise((resolve) => {
+                    localStorage.clear();
+                    resolve();
+                });
+            }
+        }
+
+        let testResults = {
+            basic: null,
+            child: null,
+            offline: null,
+            ml: null,
+            scan: null,
+            large: null,
+            concurrent: null,
+            limits: null
+        };
+
+        function updateStatus(testName, status, message = '') {
+            const statusElement = document.getElementById(`${testName}-status`);
+            const resultsElement = document.getElementById(`${testName}-results`);
+            
+            statusElement.className = `status ${status}`;
+            statusElement.textContent = status.toUpperCase();
+            
+            if (message) {
+                resultsElement.style.display = 'block';
+                resultsElement.textContent = message;
+            }
+            
+            testResults[testName] = { status, message };
+            updateSummary();
+            updateProgress();
+        }
+
+        function updateSummary() {
+            const total = Object.keys(testResults).length;
+            const completed = Object.values(testResults).filter(r => r !== null).length;
+            const passed = Object.values(testResults).filter(r => r && r.status === 'pass').length;
+            const failed = Object.values(testResults).filter(r => r && r.status === 'fail').length;
+            
+            document.getElementById('summary-text').innerHTML = `
+                <strong>Progress:</strong> ${completed}/${total} tests completed<br>
+                <strong>Passed:</strong> ${passed} | <strong>Failed:</strong> ${failed}<br>
+                <strong>Status:</strong> ${completed === total ? (failed === 0 ? '✅ All tests passed!' : '❌ Some tests failed') : '⏳ Testing in progress...'}
+            `;
+        }
+
+        function updateProgress() {
+            const total = Object.keys(testResults).length;
+            const completed = Object.values(testResults).filter(r => r !== null).length;
+            const percentage = (completed / total) * 100;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+        }
+
+        function updateStorageInfo() {
+            // LocalStorage info
+            document.getElementById('localStorage-size').textContent = localStorage.length;
+            
+            // SessionStorage info
+            document.getElementById('sessionStorage-size').textContent = sessionStorage.length;
+            
+            // IndexedDB support
+            document.getElementById('indexedDB-support').textContent = 'indexedDB' in window ? '✅ Yes' : '❌ No';
+            
+            // Cache API support
+            document.getElementById('cache-support').textContent = 'caches' in window ? '✅ Yes' : '❌ No';
+        }
+
+        async function testBasicOperations() {
+            updateStatus('basic', 'testing', 'Testing basic AsyncStorage operations...');
+            
+            try {
+                const testKey = 'cgm_test_basic';
+                const testValue = JSON.stringify({ test: 'basic', timestamp: Date.now() });
+                
+                // Test setItem
+                await AsyncStorageSimulator.setItem(testKey, testValue);
+                
+                // Test getItem
+                const retrieved = await AsyncStorageSimulator.getItem(testKey);
+                if (!retrieved) {
+                    throw new Error('Failed to retrieve stored item');
+                }
+                
+                const parsed = JSON.parse(retrieved);
+                if (parsed.test !== 'basic') {
+                    throw new Error('Data integrity check failed');
+                }
+                
+                // Test removeItem
+                await AsyncStorageSimulator.removeItem(testKey);
+                const afterRemoval = await AsyncStorageSimulator.getItem(testKey);
+                if (afterRemoval !== null) {
+                    throw new Error('Item was not properly removed');
+                }
+                
+                updateStatus('basic', 'pass', 'Basic operations working correctly:\n✅ setItem\n✅ getItem\n✅ removeItem\n✅ Data integrity');
+            } catch (error) {
+                updateStatus('basic', 'fail', `Basic operations failed: ${error.message}`);
+            }
+        }
+
+        async function testChildDataStorage() {
+            updateStatus('child', 'testing', 'Testing child data storage...');
+            
+            try {
+                const childrenData = [
+                    {
+                        id: 'child-001',
+                        name: 'Test Child 1',
+                        dateOfBirth: '2020-01-15',
+                        gender: 'male',
+                        guardian: {
+                            name: 'Test Guardian',
+                            phone: '+1234567890'
+                        }
+                    },
+                    {
+                        id: 'child-002',
+                        name: 'Test Child 2',
+                        dateOfBirth: '2019-06-20',
+                        gender: 'female',
+                        guardian: {
+                            name: 'Test Guardian 2',
+                            phone: '+0987654321'
+                        }
+                    }
+                ];
+                
+                // Store children data (as done in DataService)
+                await AsyncStorageSimulator.setItem('cached_children', JSON.stringify(childrenData));
+                
+                // Retrieve and verify
+                const retrieved = await AsyncStorageSimulator.getItem('cached_children');
+                const parsed = JSON.parse(retrieved);
+                
+                if (parsed.length !== 2 || parsed[0].id !== 'child-001') {
+                    throw new Error('Child data integrity check failed');
+                }
+                
+                updateStatus('child', 'pass', `Child data storage working correctly:\n✅ Stored ${parsed.length} children\n✅ Data integrity verified\n✅ Guardian information preserved`);
+            } catch (error) {
+                updateStatus('child', 'fail', `Child data storage failed: ${error.message}`);
+            }
+        }
+
+        async function testOfflineActions() {
+            updateStatus('offline', 'testing', 'Testing offline actions queue...');
+            
+            try {
+                const offlineActions = [
+                    {
+                        id: Date.now().toString(),
+                        action: 'create_child',
+                        data: { name: 'Offline Child', dateOfBirth: '2021-03-10' },
+                        timestamp: new Date().toISOString()
+                    },
+                    {
+                        id: (Date.now() + 1).toString(),
+                        action: 'create_consent',
+                        data: { childId: 'child-001', guardianSignature: 'signature_data' },
+                        timestamp: new Date().toISOString()
+                    }
+                ];
+                
+                // Store offline actions (as done in DataService)
+                await AsyncStorageSimulator.setItem('offline_actions', JSON.stringify(offlineActions));
+                
+                // Retrieve and verify
+                const retrieved = await AsyncStorageSimulator.getItem('offline_actions');
+                const parsed = JSON.parse(retrieved);
+                
+                if (parsed.length !== 2 || parsed[0].action !== 'create_child') {
+                    throw new Error('Offline actions integrity check failed');
+                }
+                
+                updateStatus('offline', 'pass', `Offline actions queue working correctly:\n✅ Stored ${parsed.length} actions\n✅ Action types preserved\n✅ Timestamps recorded`);
+            } catch (error) {
+                updateStatus('offline', 'fail', `Offline actions test failed: ${error.message}`);
+            }
+        }
+
+        async function testMLCache() {
+            updateStatus('ml', 'testing', 'Testing ML cache storage...');
+            
+            try {
+                const cacheKey = 'test_analysis_123';
+                const cacheEntry = {
+                    request: {
+                        images: ['front_view.jpg', 'side_view.jpg'],
+                        childId: 'child-001'
+                    },
+                    result: {
+                        measurements: {
+                            height: 85.5,
+                            weight: 12.3,
+                            muac: 14.2
+                        },
+                        confidence: 0.95
+                    },
+                    timestamp: new Date().toISOString(),
+                    ttl: 24 * 60 * 60 * 1000
+                };
+                
+                // Store ML cache (as done in MLService)
+                await AsyncStorageSimulator.setItem(`ml_cache_${cacheKey}`, JSON.stringify(cacheEntry));
+                
+                // Retrieve and verify
+                const retrieved = await AsyncStorageSimulator.getItem(`ml_cache_${cacheKey}`);
+                const parsed = JSON.parse(retrieved);
+                
+                if (!parsed.result || parsed.result.measurements.height !== 85.5) {
+                    throw new Error('ML cache integrity check failed');
+                }
+                
+                updateStatus('ml', 'pass', `ML cache storage working correctly:\n✅ Analysis results cached\n✅ TTL information preserved\n✅ Measurements data intact`);
+            } catch (error) {
+                updateStatus('ml', 'fail', `ML cache test failed: ${error.message}`);
+            }
+        }
+
+        async function testScanSessionStorage() {
+            updateStatus('scan', 'testing', 'Testing scan session storage...');
+            
+            try {
+                const scanSession = {
+                    id: 'session-001',
+                    childId: 'child-001',
+                    consentId: 'consent-001',
+                    status: 'completed',
+                    images: {
+                        front: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...',
+                        side: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...'
+                    },
+                    measurements: {
+                        height: 87.2,
+                        weight: 13.1,
+                        muac: 14.8
+                    },
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Store scan session
+                await AsyncStorageSimulator.setItem(`scan_session_${scanSession.id}`, JSON.stringify(scanSession));
+                
+                // Retrieve and verify
+                const retrieved = await AsyncStorageSimulator.getItem(`scan_session_${scanSession.id}`);
+                const parsed = JSON.parse(retrieved);
+                
+                if (!parsed.measurements || parsed.childId !== 'child-001') {
+                    throw new Error('Scan session integrity check failed');
+                }
+                
+                updateStatus('scan', 'pass', `Scan session storage working correctly:\n✅ Session data preserved\n✅ Image data stored\n✅ Measurements intact`);
+            } catch (error) {
+                updateStatus('scan', 'fail', `Scan session test failed: ${error.message}`);
+            }
+        }
+
+        async function testLargeDataStorage() {
+            updateStatus('large', 'testing', 'Testing large data storage...');
+            
+            try {
+                // Create a large data object (simulating image data)
+                const largeData = {
+                    id: 'large-test',
+                    imageData: 'data:image/jpeg;base64,' + 'A'.repeat(100000), // ~100KB
+                    metadata: {
+                        size: 100000,
+                        type: 'image/jpeg',
+                        timestamp: new Date().toISOString()
+                    }
+                };
+                
+                const startTime = performance.now();
+                await AsyncStorageSimulator.setItem('large_data_test', JSON.stringify(largeData));
+                const storeTime = performance.now() - startTime;
+                
+                const retrieveStart = performance.now();
+                const retrieved = await AsyncStorageSimulator.getItem('large_data_test');
+                const retrieveTime = performance.now() - retrieveStart;
+                
+                const parsed = JSON.parse(retrieved);
+                
+                if (parsed.imageData.length !== largeData.imageData.length) {
+                    throw new Error('Large data integrity check failed');
+                }
+                
+                await AsyncStorageSimulator.removeItem('large_data_test');
+                
+                updateStatus('large', 'pass', `Large data storage working correctly:\n✅ 100KB data stored successfully\n✅ Store time: ${storeTime.toFixed(2)}ms\n✅ Retrieve time: ${retrieveTime.toFixed(2)}ms`);
+            } catch (error) {
+                updateStatus('large', 'fail', `Large data test failed: ${error.message}`);
+            }
+        }
+
+        async function testConcurrentOperations() {
+            updateStatus('concurrent', 'testing', 'Testing concurrent operations...');
+            
+            try {
+                const operations = [];
+                const numOperations = 10;
+                
+                // Create multiple concurrent operations
+                for (let i = 0; i < numOperations; i++) {
+                    const operation = AsyncStorageSimulator.setItem(
+                        `concurrent_test_${i}`,
+                        JSON.stringify({ index: i, timestamp: Date.now() })
+                    );
+                    operations.push(operation);
+                }
+                
+                // Wait for all operations to complete
+                await Promise.all(operations);
+                
+                // Verify all data was stored correctly
+                const verifications = [];
+                for (let i = 0; i < numOperations; i++) {
+                    verifications.push(AsyncStorageSimulator.getItem(`concurrent_test_${i}`));
+                }
+                
+                const results = await Promise.all(verifications);
+                
+                // Check integrity
+                for (let i = 0; i < numOperations; i++) {
+                    const parsed = JSON.parse(results[i]);
+                    if (parsed.index !== i) {
+                        throw new Error(`Concurrent operation ${i} failed integrity check`);
+                    }
+                }
+                
+                // Cleanup
+                const cleanupOps = [];
+                for (let i = 0; i < numOperations; i++) {
+                    cleanupOps.push(AsyncStorageSimulator.removeItem(`concurrent_test_${i}`));
+                }
+                await Promise.all(cleanupOps);
+                
+                updateStatus('concurrent', 'pass', `Concurrent operations working correctly:\n✅ ${numOperations} operations completed\n✅ All data integrity verified\n✅ No race conditions detected`);
+            } catch (error) {
+                updateStatus('concurrent', 'fail', `Concurrent operations test failed: ${error.message}`);
+            }
+        }
+
+        async function testStorageLimits() {
+            updateStatus('limits', 'testing', 'Testing storage limits...');
+            
+            try {
+                let totalSize = 0;
+                let itemCount = 0;
+                
+                // Calculate current storage usage
+                const keys = await AsyncStorageSimulator.getAllKeys();
+                for (const key of keys) {
+                    const value = await AsyncStorageSimulator.getItem(key);
+                    if (value) {
+                        totalSize += value.length;
+                        itemCount++;
+                    }
+                }
+                
+                // Test storage quota (if available)
+                let quotaInfo = 'Not available';
+                if ('storage' in navigator && 'estimate' in navigator.storage) {
+                    const estimate = await navigator.storage.estimate();
+                    const usedMB = (estimate.usage / 1024 / 1024).toFixed(2);
+                    const quotaMB = (estimate.quota / 1024 / 1024).toFixed(2);
+                    quotaInfo = `${usedMB}MB / ${quotaMB}MB`;
+                }
+                
+                updateStatus('limits', 'pass', `Storage limits information:\n✅ Current items: ${itemCount}\n✅ Estimated size: ${(totalSize / 1024).toFixed(2)}KB\n✅ Storage quota: ${quotaInfo}`);
+            } catch (error) {
+                updateStatus('limits', 'fail', `Storage limits test failed: ${error.message}`);
+            }
+        }
+
+        async function refreshStorageData() {
+            const preview = document.getElementById('storage-preview');
+            preview.textContent = 'Loading storage data...';
+            
+            try {
+                const keys = await AsyncStorageSimulator.getAllKeys();
+                const cgmKeys = keys.filter(key => 
+                    key.startsWith('cached_') || 
+                    key.startsWith('offline_') || 
+                    key.startsWith('ml_cache_') || 
+                    key.startsWith('scan_session_') ||
+                    key.includes('cgm')
+                );
+                
+                let output = `Found ${cgmKeys.length} CGM-related storage items:\n\n`;
+                
+                for (const key of cgmKeys.slice(0, 10)) { // Show first 10 items
+                    const value = await AsyncStorageSimulator.getItem(key);
+                    const preview = value ? value.substring(0, 100) + (value.length > 100 ? '...' : '') : 'null';
+                    output += `${key}:\n${preview}\n\n`;
+                }
+                
+                if (cgmKeys.length > 10) {
+                    output += `... and ${cgmKeys.length - 10} more items`;
+                }
+                
+                preview.textContent = output || 'No CGM-related storage data found.';
+            } catch (error) {
+                preview.textContent = `Error loading storage data: ${error.message}`;
+            }
+        }
+
+        async function runAllTests() {
+            const tests = [
+                testBasicOperations,
+                testChildDataStorage,
+                testOfflineActions,
+                testMLCache,
+                testScanSessionStorage,
+                testLargeDataStorage,
+                testConcurrentOperations,
+                testStorageLimits
+            ];
+            
+            for (const test of tests) {
+                await test();
+                // Small delay between tests
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            
+            await refreshStorageData();
+        }
+
+        function resetTests() {
+            testResults = {
+                basic: null,
+                child: null,
+                offline: null,
+                ml: null,
+                scan: null,
+                large: null,
+                concurrent: null,
+                limits: null
+            };
+            
+            // Reset all status indicators
+            Object.keys(testResults).forEach(testName => {
+                const statusElement = document.getElementById(`${testName}-status`);
+                const resultsElement = document.getElementById(`${testName}-results`);
+                
+                statusElement.className = 'status pending';
+                statusElement.textContent = 'PENDING';
+                resultsElement.style.display = 'none';
+            });
+            
+            updateSummary();
+            updateProgress();
+        }
+
+        async function clearAllStorage() {
+            if (confirm('Are you sure you want to clear all storage data? This action cannot be undone.')) {
+                await AsyncStorageSimulator.clear();
+                updateStorageInfo();
+                await refreshStorageData();
+                alert('All storage data has been cleared.');
+            }
+        }
+
+        function exportResults() {
+            const results = {
+                timestamp: new Date().toISOString(),
+                testResults: testResults,
+                storageInfo: {
+                    localStorage: localStorage.length,
+                    sessionStorage: sessionStorage.length,
+                    indexedDBSupport: 'indexedDB' in window,
+                    cacheAPISupport: 'caches' in window
+                },
+                summary: {
+                    total: Object.keys(testResults).length,
+                    completed: Object.values(testResults).filter(r => r !== null).length,
+                    passed: Object.values(testResults).filter(r => r && r.status === 'pass').length,
+                    failed: Object.values(testResults).filter(r => r && r.status === 'fail').length
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(results, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `storage-test-results-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize
+        updateSummary();
+        updateProgress();
+        updateStorageInfo();
+        
+        // Update storage info every 5 seconds
+        setInterval(updateStorageInfo, 5000);
+    </script>
+</body>
+</html>

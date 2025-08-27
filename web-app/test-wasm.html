@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAssembly Components Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .warning { background-color: #fff3cd; border-color: #ffeaa7; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔬 WebAssembly Components Test</h1>
+    <p>Testing WebAssembly support and opencv.js availability in the Child Growth Monitor PWA.</p>
+
+    <div class="test-section info">
+        <h3>🧪 Test Results</h3>
+        <div id="test-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>🔧 Manual Tests</h3>
+        <button onclick="testWebAssemblySupport()">Test WebAssembly Support</button>
+        <button onclick="testOpenCVJS()">Test OpenCV.js Loading</button>
+        <button onclick="testWebAssemblyFeatures()">Test WASM Features</button>
+        <button onclick="runAllTests()">Run All Tests</button>
+    </div>
+
+    <div class="test-section">
+        <h3>📊 Test Output</h3>
+        <div id="test-output"></div>
+    </div>
+
+    <script>
+        let testResults = [];
+
+        function log(message, type = 'info') {
+            const output = document.getElementById('test-output');
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `<div class="${type}"><strong>[${timestamp}]</strong> ${message}</div>`;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function updateResults() {
+            const resultsDiv = document.getElementById('test-results');
+            const passed = testResults.filter(r => r.passed).length;
+            const total = testResults.length;
+            
+            let html = `<h4>Test Summary: ${passed}/${total} tests passed</h4>`;
+            testResults.forEach(result => {
+                const status = result.passed ? '✅' : '❌';
+                const className = result.passed ? 'success' : 'error';
+                html += `<div class="${className}">${status} ${result.name}: ${result.message}</div>`;
+            });
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        function addTestResult(name, passed, message) {
+            testResults.push({ name, passed, message });
+            updateResults();
+        }
+
+        function testWebAssemblySupport() {
+            log('Testing WebAssembly support...');
+            
+            try {
+                if (typeof WebAssembly === 'object' && typeof WebAssembly.instantiate === 'function') {
+                    log('✅ WebAssembly is supported by this browser', 'success');
+                    addTestResult('WebAssembly Support', true, 'Browser supports WebAssembly');
+                    
+                    // Test basic WASM functionality
+                    const wasmCode = new Uint8Array([
+                        0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00,
+                        0x01, 0x07, 0x01, 0x60, 0x02, 0x7f, 0x7f, 0x01, 0x7f,
+                        0x03, 0x02, 0x01, 0x00, 0x07, 0x07, 0x01, 0x03, 0x61, 0x64, 0x64, 0x00, 0x00,
+                        0x0a, 0x09, 0x01, 0x07, 0x00, 0x20, 0x00, 0x20, 0x01, 0x6a, 0x0b
+                    ]);
+                    
+                    WebAssembly.instantiate(wasmCode).then(result => {
+                        const addFunction = result.instance.exports.add;
+                        const sum = addFunction(5, 3);
+                        if (sum === 8) {
+                            log('✅ WebAssembly execution test passed', 'success');
+                            addTestResult('WASM Execution', true, 'Basic WASM function executed successfully');
+                        } else {
+                            log('❌ WebAssembly execution test failed', 'error');
+                            addTestResult('WASM Execution', false, 'WASM function returned unexpected result');
+                        }
+                    }).catch(error => {
+                        log(`❌ WebAssembly instantiation failed: ${error.message}`, 'error');
+                        addTestResult('WASM Execution', false, `Instantiation failed: ${error.message}`);
+                    });
+                } else {
+                    log('❌ WebAssembly is not supported by this browser', 'error');
+                    addTestResult('WebAssembly Support', false, 'Browser does not support WebAssembly');
+                }
+            } catch (error) {
+                log(`❌ Error testing WebAssembly: ${error.message}`, 'error');
+                addTestResult('WebAssembly Support', false, `Error: ${error.message}`);
+            }
+        }
+
+        function testOpenCVJS() {
+            log('Testing OpenCV.js availability...');
+            
+            // Check if opencv.js is already loaded
+            if (typeof cv !== 'undefined') {
+                log('✅ OpenCV.js is already loaded', 'success');
+                addTestResult('OpenCV.js Loaded', true, 'OpenCV.js is available');
+                testOpenCVFunctionality();
+                return;
+            }
+            
+            // Try to load opencv.js from CDN
+            log('Attempting to load OpenCV.js from CDN...');
+            const script = document.createElement('script');
+            script.src = 'https://docs.opencv.org/4.8.0/opencv.js';
+            script.async = true;
+            
+            script.onload = function() {
+                log('✅ OpenCV.js loaded successfully from CDN', 'success');
+                addTestResult('OpenCV.js Loading', true, 'Loaded from CDN');
+                
+                // Wait for opencv to initialize
+                setTimeout(() => {
+                    if (typeof cv !== 'undefined') {
+                        testOpenCVFunctionality();
+                    } else {
+                        log('⚠️ OpenCV.js loaded but cv object not available', 'warning');
+                        addTestResult('OpenCV.js Initialization', false, 'cv object not available after loading');
+                    }
+                }, 1000);
+            };
+            
+            script.onerror = function() {
+                log('❌ Failed to load OpenCV.js from CDN', 'error');
+                addTestResult('OpenCV.js Loading', false, 'Failed to load from CDN');
+            };
+            
+            document.head.appendChild(script);
+        }
+
+        function testOpenCVFunctionality() {
+            log('Testing OpenCV.js functionality...');
+            
+            try {
+                if (typeof cv === 'undefined') {
+                    log('❌ OpenCV.js not available for testing', 'error');
+                    addTestResult('OpenCV.js Functionality', false, 'cv object not available');
+                    return;
+                }
+                
+                // Test basic OpenCV functionality
+                const mat = new cv.Mat(100, 100, cv.CV_8UC3, new cv.Scalar(255, 0, 0));
+                if (mat.rows === 100 && mat.cols === 100) {
+                    log('✅ OpenCV.js basic functionality test passed', 'success');
+                    addTestResult('OpenCV.js Functionality', true, 'Basic Mat operations work');
+                } else {
+                    log('❌ OpenCV.js basic functionality test failed', 'error');
+                    addTestResult('OpenCV.js Functionality', false, 'Mat operations failed');
+                }
+                mat.delete();
+                
+            } catch (error) {
+                log(`❌ OpenCV.js functionality test error: ${error.message}`, 'error');
+                addTestResult('OpenCV.js Functionality', false, `Error: ${error.message}`);
+            }
+        }
+
+        function testWebAssemblyFeatures() {
+            log('Testing WebAssembly features...');
+            
+            const features = {
+                'WebAssembly.Memory': typeof WebAssembly.Memory,
+                'WebAssembly.Table': typeof WebAssembly.Table,
+                'WebAssembly.Module': typeof WebAssembly.Module,
+                'WebAssembly.Instance': typeof WebAssembly.Instance,
+                'WebAssembly.compile': typeof WebAssembly.compile,
+                'WebAssembly.instantiate': typeof WebAssembly.instantiate
+            };
+            
+            let allSupported = true;
+            for (const [feature, type] of Object.entries(features)) {
+                if (type === 'function' || type === 'object') {
+                    log(`✅ ${feature}: ${type}`, 'success');
+                } else {
+                    log(`❌ ${feature}: not supported`, 'error');
+                    allSupported = false;
+                }
+            }
+            
+            addTestResult('WASM Features', allSupported, 
+                allSupported ? 'All WebAssembly features supported' : 'Some WebAssembly features missing');
+        }
+
+        function runAllTests() {
+            log('🚀 Running all WebAssembly tests...');
+            testResults = []; // Reset results
+            
+            testWebAssemblySupport();
+            setTimeout(() => testOpenCVJS(), 500);
+            setTimeout(() => testWebAssemblyFeatures(), 1000);
+        }
+
+        // Auto-run basic tests on page load
+        window.addEventListener('load', () => {
+            log('🔍 Starting WebAssembly component verification...');
+            testWebAssemblySupport();
+            testWebAssemblyFeatures();
+        });
+    </script>
+</body>
+</html>

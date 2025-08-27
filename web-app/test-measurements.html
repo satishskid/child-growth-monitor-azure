@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anthropometric Measurements Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Anthropometric Measurements Test</h1>
+    
+    <div class="test-container">
+        <h2>Test Controls</h2>
+        <button onclick="runPoseEstimatorTest()">Test Pose Estimator</button>
+        <button onclick="runAnthropometricPredictorTest()">Test Anthropometric Predictor</button>
+        <button onclick="runMLServiceTest()">Test ML Service</button>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="clearResults()">Clear Results</button>
+    </div>
+    
+    <div id="results"></div>
+    
+    <script type="module">
+        // Import the TypeScript modules
+        import { RealPoseEstimator } from './src/pose-estimator.js';
+        import { RealAnthropometricPredictor } from './src/anthropometric-predictor.js';
+        import { mlService } from './src/services/MLService.js';
+        
+        // Make functions available globally
+        window.RealPoseEstimator = RealPoseEstimator;
+        window.RealAnthropometricPredictor = RealAnthropometricPredictor;
+        window.mlService = mlService;
+        
+        function addResult(title, content, type = 'info') {
+            const resultsDiv = document.getElementById('results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-container`;
+            resultDiv.innerHTML = `
+                <h3>${title}</h3>
+                <div class="test-result ${type}">${content}</div>
+            `;
+            resultsDiv.appendChild(resultDiv);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+        
+        window.addResult = addResult;
+        
+        // Test functions
+        window.runPoseEstimatorTest = function() {
+            try {
+                addResult('🔍 Pose Estimator Test', 'Starting pose estimator test...', 'info');
+                
+                const poseEstimator = new RealPoseEstimator();
+                
+                // Create a mock image object
+                const mockImage = {
+                    width: 640,
+                    height: 480
+                };
+                
+                const result = poseEstimator.estimatePose(mockImage, 10);
+                
+                if (result.success) {
+                    const output = `
+                        ✅ Pose estimation successful!<br>
+                        📊 <strong>Results:</strong><br>
+                        • Pose Present: ${result.pose_present}<br>
+                        • Confidence Score: ${result.confidence_score.toFixed(2)}<br>
+                        • Quality Score: ${result.quality_score.toFixed(2)}<br>
+                        • Pose Quality: ${result.pose_quality}<br>
+                        • Scale Factor: ${result.scale_factor_cm_per_pixel.toFixed(4)} cm/pixel<br>
+                        • Keypoints Count: ${result.keypoints.length}<br>
+                        • Landmarks Count: ${result.landmarks.length}<br><br>
+                        
+                        📏 <strong>Measurements:</strong><br>
+                        ${result.measurements.height_cm ? `• Height: ${result.measurements.height_cm.toFixed(1)} cm<br>` : ''}
+                        ${result.measurements.arm_span_cm ? `• Arm Span: ${result.measurements.arm_span_cm.toFixed(1)} cm<br>` : ''}
+                        ${result.measurements.muac_cm ? `• MUAC: ${result.measurements.muac_cm.toFixed(1)} cm<br>` : ''}
+                        ${result.measurements.weight_kg ? `• Weight: ${result.measurements.weight_kg.toFixed(1)} kg<br>` : ''}
+                    `;
+                    addResult('✅ Pose Estimator Test Results', output, 'success');
+                } else {
+                    addResult('❌ Pose Estimator Test Failed', `Error: ${result.error}`, 'error');
+                }
+                
+            } catch (error) {
+                addResult('❌ Pose Estimator Test Error', `Exception: ${error.message}<br><pre>${error.stack}</pre>`, 'error');
+            }
+        };
+        
+        window.runAnthropometricPredictorTest = function() {
+            try {
+                addResult('🧠 Anthropometric Predictor Test', 'Starting anthropometric predictor test...', 'info');
+                
+                const predictor = new RealAnthropometricPredictor();
+                
+                // Create mock pose data
+                const mockPoseData = {
+                    landmarks: [
+                        { id: 0, name: 'nose', x: 320, y: 100, z: 0, visibility: 0.9, presence: 1.0 },
+                        { id: 5, name: 'left_shoulder', x: 280, y: 200, z: 0, visibility: 0.8, presence: 1.0 },
+                        { id: 6, name: 'right_shoulder', x: 360, y: 200, z: 0, visibility: 0.8, presence: 1.0 },
+                        { id: 11, name: 'left_hip', x: 300, y: 350, z: 0, visibility: 0.7, presence: 1.0 },
+                        { id: 12, name: 'right_hip', x: 340, y: 350, z: 0, visibility: 0.7, presence: 1.0 },
+                        { id: 15, name: 'left_ankle', x: 295, y: 450, z: 0, visibility: 0.6, presence: 1.0 },
+                        { id: 16, name: 'right_ankle', x: 345, y: 450, z: 0, visibility: 0.6, presence: 1.0 }
+                    ],
+                    keypoints: [],
+                    quality_score: 0.75,
+                    scale_factor_cm_per_pixel: 0.5,
+                    confidence_score: 0.8,
+                    age_months: 24,
+                    sex: 'M'
+                };
+                
+                const result = predictor.predictMeasurements(mockPoseData);
+                
+                const output = `
+                    ✅ Anthropometric prediction successful!<br>
+                    📊 <strong>Predictions:</strong><br>
+                    • Height: ${result.height_cm} cm<br>
+                    • Weight: ${result.weight_kg} kg<br>
+                    • MUAC: ${result.muac_cm} cm<br>
+                    • Head Circumference: ${result.head_circumference_cm} cm<br><br>
+                    
+                    🎯 <strong>Assessment:</strong><br>
+                    • Nutritional Status: ${result.nutritional_status}<br>
+                    • Malnutrition Risk: ${result.malnutrition_risk}<br>
+                    • Overall Confidence: ${result.confidence_score.toFixed(2)}<br>
+                    • Model Version: ${result.model_version}<br>
+                    • Feature Count: ${result.feature_count}<br><br>
+                    
+                    📈 <strong>Confidence Scores:</strong><br>
+                    ${Object.entries(result.measurement_confidence).map(([key, value]) => 
+                        `• ${key}: ${(value * 100).toFixed(1)}%`
+                    ).join('<br>')}<br><br>
+                    
+                    📊 <strong>WHO Z-Scores:</strong><br>
+                    ${Object.entries(result.who_z_scores).map(([key, value]) => 
+                        `• ${key}: ${value.toFixed(2)}`
+                    ).join('<br>')}
+                `;
+                addResult('✅ Anthropometric Predictor Test Results', output, 'success');
+                
+            } catch (error) {
+                addResult('❌ Anthropometric Predictor Test Error', `Exception: ${error.message}<br><pre>${error.stack}</pre>`, 'error');
+            }
+        };
+        
+        window.runMLServiceTest = function() {
+            try {
+                addResult('🤖 ML Service Test', 'Starting ML service test...', 'info');
+                
+                // Create a mock image data (base64 encoded 1x1 pixel image)
+                const mockImageData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+                
+                const testRequest = {
+                    image_data: mockImageData,
+                    age_months: 24,
+                    sex: 'M',
+                    reference_object_size_cm: 10,
+                    metadata: {
+                        scan_angle: 'front',
+                        timestamp: new Date().toISOString(),
+                        session_id: 'test-session-001'
+                    }
+                };
+                
+                const startTime = Date.now();
+                
+                mlService.analyzeImage(testRequest).then(result => {
+                    const processingTime = Date.now() - startTime;
+                    
+                    if (result && result.success) {
+                        const output = `
+                            ✅ ML Service analysis successful!<br>
+                            ⏱️ Processing Time: ${processingTime} ms<br><br>
+                            
+                            📏 <strong>Measurements:</strong><br>
+                            • Height: ${result.measurements.height.value} ${result.measurements.height.unit} (confidence: ${result.measurements.height.confidence})<br>
+                            • Weight: ${result.measurements.weight.value} ${result.measurements.weight.unit} (confidence: ${result.measurements.weight.confidence})<br>
+                            • MUAC: ${result.measurements.muac.value} ${result.measurements.muac.unit} (confidence: ${result.measurements.muac.confidence})<br>
+                            • Head Circumference: ${result.measurements.head_circumference.value} ${result.measurements.head_circumference.unit} (confidence: ${result.measurements.head_circumference.confidence})<br><br>
+                            
+                            🩺 <strong>Nutritional Status:</strong><br>
+                            • Stunting: ${result.nutritional_status.stunting.status} (z-score: ${result.nutritional_status.stunting.z_score})<br>
+                            • Wasting: ${result.nutritional_status.wasting.status} (z-score: ${result.nutritional_status.wasting.z_score})<br>
+                            • Underweight: ${result.nutritional_status.underweight.status} (z-score: ${result.nutritional_status.underweight.z_score})<br><br>
+                            
+                            🔧 <strong>Model Info:</strong><br>
+                            • Version: ${result.model_info.version}<br>
+                            • Confidence Threshold: ${result.model_info.confidence_threshold}<br>
+                            • Processing Time: ${result.model_info.processing_time_ms} ms
+                        `;
+                        addResult('✅ ML Service Test Results', output, 'success');
+                    } else {
+                        addResult('❌ ML Service Test Failed', 'ML Service returned null or failed result', 'error');
+                    }
+                }).catch(error => {
+                    addResult('❌ ML Service Test Error', `Exception: ${error.message}<br><pre>${error.stack}</pre>`, 'error');
+                });
+                
+            } catch (error) {
+                addResult('❌ ML Service Test Error', `Exception: ${error.message}<br><pre>${error.stack}</pre>`, 'error');
+            }
+        };
+        
+        window.runAllTests = function() {
+            clearResults();
+            addResult('🚀 Running All Tests', 'Starting comprehensive test suite...', 'info');
+            
+            setTimeout(() => runPoseEstimatorTest(), 100);
+            setTimeout(() => runAnthropometricPredictorTest(), 500);
+            setTimeout(() => runMLServiceTest(), 1000);
+            
+            setTimeout(() => {
+                addResult('🏁 All Tests Completed', 'Test suite execution finished!', 'success');
+            }, 2000);
+        };
+        
+        window.clearResults = function() {
+            document.getElementById('results').innerHTML = '';
+        };
+        
+        // Auto-run tests on page load
+        setTimeout(() => {
+            addResult('🎯 Test Page Loaded', 'Anthropometric measurements test page is ready. Click the buttons above to run tests.', 'info');
+        }, 100);
+        
+    </script>
+</body>
+</html>

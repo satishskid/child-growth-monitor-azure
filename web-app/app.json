@@ -1,0 +1,79 @@
+{
+  "expo": {
+    "name": "Child Growth Monitor",
+    "slug": "child-growth-monitor",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/favicon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "org.childgrowthmonitor.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to scan children for malnutrition assessment.",
+        "NSLocationWhenInUseUsageDescription": "Location is used to tag scan data for geographic analysis.",
+        "NSMicrophoneUsageDescription": "Microphone access may be needed for video recording during scans."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "org.childgrowthmonitor.app",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "pwa": {
+        "name": "Child Growth Monitor PWA",
+        "shortName": "CGM PWA",
+        "themeColor": "#2E8B57",
+        "backgroundColor": "#ffffff",
+        "display": "standalone",
+        "scope": "/",
+        "startUrl": "/",
+        "serviceWorker": "./public/service-worker.js",
+        "icons": [
+          {
+            "src": "./public/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+          },
+          {
+            "src": "./public/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+          }
+        ]
+      }
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera for child scanning."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location for tagging scan data."
+        }
+      ]
+    ]
+  }
+}
